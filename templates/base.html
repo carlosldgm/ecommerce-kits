@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KitBox - Tu tienda de kits{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E8F4F8;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            color: #6FA8DC;
+            font-size: 1.8rem;
+        }
+
+        .navbar h1 a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .carrito-badge {
+            background: #7CB9E8;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(124, 185, 232, 0.3);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            z-index: 100;
+        }
+
+        .carrito-badge:hover {
+            transform: scale(1.05);
+            background: #6FA8DC;
+        }
+        
+        .carrito-badge span {
+            pointer-events: none;
+        }
+
+        .btn-dev-vaciar {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-dev-vaciar:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1><a href="/">📦 KitBox</a></h1>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <button class="btn-dev-vaciar" onclick="vaciarCarritoDesarrollo(); return false;">
+                🗑️ DEV: Vaciar
+            </button>
+            <a href="/carrito" class="carrito-badge">
+                🛒 Carrito (<span id="carrito-count">0</span>)
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        async function actualizarCarrito() {
+            try {
+                const response = await fetch('/api/carrito');
+                const data = await response.json();
+                document.getElementById('carrito-count').textContent = data.total;
+            } catch (error) {
+                console.error('Error al actualizar carrito:', error);
+            }
+        }
+
+        async function vaciarCarritoDesarrollo() {
+            if (confirm('🚨 DESARROLLO: ¿Vaciar todo el carrito?')) {
+                try {
+                    const response = await fetch('/api/carrito/limpiar', {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        await actualizarCarrito();
+                        alert('✅ Carrito vaciado');
+                        if (window.location.pathname === '/carrito') {
+                            location.reload();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error al vaciar carrito:', error);
+                    alert('❌ Error al vaciar carrito');
+                }
+            }
+        }
+
+        actualizarCarrito();
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

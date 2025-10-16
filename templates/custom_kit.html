@@ -1,0 +1,819 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    .custom-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 968px) {
+        .custom-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .panel h2 {
+        color: #6FA8DC;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    /* Estilos del Chat */
+    .chat-container {
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        border: 2px solid #f0f0f0;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #fafafa;
+    }
+
+    .message {
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+        border-radius: 10px;
+        max-width: 80%;
+    }
+
+    .message.user {
+        background: #6FA8DC;
+        color: white;
+        margin-left: auto;
+    }
+
+    .message.assistant {
+        background: #e0e0e0;
+        color: #333;
+    }
+
+    .chat-suggestions {
+        background: #E8F4F8;
+        border: 1px dashed #A8D8EA;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .chat-suggestions strong {
+        color: #6FA8DC;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .chat-input-container {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .chat-input {
+        flex: 1;
+        padding: 0.8rem;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .chat-input:focus {
+        border-color: #A8D8EA;
+    }
+
+    .btn-send {
+        background: #7CB9E8;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+        box-shadow: 0 2px 5px rgba(124, 185, 232, 0.3);
+    }
+
+    .btn-send:hover {
+        background: #6FA8DC;
+    }
+
+    /* Estilos del Catálogo */
+    .categorias-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        background: #f0f0f0;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+        background: #7CB9E8;
+        color: white;
+        font-weight: bold;
+    }
+
+    .productos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .producto-card {
+        border: 2px solid #eee;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .producto-card:hover {
+        border-color: #A8D8EA;
+        transform: translateY(-5px);
+    }
+
+    .producto-card h4 {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .producto-card .precio {
+        color: #6FA8DC;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-add {
+        background: #7CB9E8;
+        color: white;
+        border: none;
+        padding: 0.4rem 1rem;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .btn-add:hover {
+        background: #6FA8DC;
+    }
+
+    /* Mi Kit */
+    .mi-kit {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+    }
+
+    .mi-kit h2 {
+        color: #6FA8DC;
+        margin-bottom: 1rem;
+    }
+
+    .kit-items {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+    }
+
+    .kit-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .kit-item-info {
+        flex: 1;
+    }
+
+    .kit-item-nombre {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .kit-item-precio {
+        color: #666;
+        font-size: 0.9rem;
+        margin-right: 1rem;
+    }
+
+    .kit-item-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .cantidad-controls-kit {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f0f0f0;
+        border-radius: 20px;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .btn-cantidad-kit {
+        background: #7CB9E8;
+        color: white;
+        border: none;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .btn-cantidad-kit:hover:not(:disabled) {
+        background: #6FA8DC;
+        transform: scale(1.1);
+    }
+
+    .btn-cantidad-kit:disabled {
+        background: #ddd;
+        color: #999;
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .cantidad-numero-kit {
+        font-weight: bold;
+        color: #333;
+        min-width: 25px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .btn-remove {
+        background: #f44336;
+        color: white;
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .kit-total {
+        border-top: 2px solid #A8D8EA;
+        padding-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #6FA8DC;
+    }
+
+    .btn-finalizar {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 1rem;
+        transition: background 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .btn-finalizar:hover {
+        background: #229954;
+    }
+
+    .kit-vacio {
+        text-align: center;
+        color: #999;
+        padding: 2rem;
+    }
+
+    .opciones-ia-container {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #E8F4F8;
+        border-radius: 10px;
+        border: 2px solid #A8D8EA;
+    }
+
+    .opcion-ia-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid #eee;
+        transition: all 0.3s;
+    }
+
+    .opcion-ia-card:hover {
+        border-color: #A8D8EA;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .opcion-ia-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .opcion-producto {
+        font-size: 0.85rem;
+        color: #555;
+        padding: 0.2rem 0;
+    }
+
+    .btn-agregar-opcion {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .btn-agregar-opcion:hover {
+        background: #229954;
+        transform: scale(1.05);
+    }
+
+    .typing-indicator {
+        opacity: 0.7;
+        font-style: italic;
+    }
+
+    .btn-volver {
+        display: inline-block;
+        color: #6FA8DC;
+        text-decoration: none;
+        margin-bottom: 1rem;
+        font-weight: bold;
+        background: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border: 2px solid #6FA8DC;
+    }
+
+    .btn-volver:hover {
+        background: #E8F4F8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/" class="btn-volver">← Volver al inicio</a>
+
+<div class="custom-container">
+    <!-- Panel Izquierdo: Chat con IA -->
+    <div class="panel">
+        <h2>💬 Asistente IA</h2>
+        
+        <div class="chat-suggestions">
+            <strong>💡 Puedes pedirme:</strong>
+            • "Arma una caja con $20,000 de productos de limpieza"<br>
+            • "Necesito snacks para picoteo con presupuesto de $15,000"<br>
+            • "Dame opciones de productos de belleza hasta $30,000"<br>
+            • "Quiero artículos para bebé, tengo $25,000"
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+                <div class="message assistant">
+                    ¡Hola! 👋 Soy tu asistente para armar kits personalizados. 
+                    Cuéntame qué tipo de productos necesitas y cuál es tu presupuesto, 
+                    y te daré 3 opciones perfectas para ti.
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chat-input" 
+                    placeholder="Escribe tu mensaje aquí..."
+                    onkeypress="if(event.key === 'Enter') enviarMensaje()"
+                >
+                <button class="btn-send" onclick="enviarMensaje()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Derecho: Catálogo de Productos -->
+    <div class="panel">
+        <h2>🛍️ Catálogo de Productos</h2>
+        
+        <div class="categorias-tabs">
+            <button class="tab-btn active" onclick="cambiarCategoria('limpieza')">🧼 Limpieza</button>
+            <button class="tab-btn" onclick="cambiarCategoria('snacks')">🍿 Snacks</button>
+            <button class="tab-btn" onclick="cambiarCategoria('belleza')">💄 Belleza</button>
+            <button class="tab-btn" onclick="cambiarCategoria('bebe')">👶 Bebé</button>
+        </div>
+
+        <div class="productos-grid" id="productos-grid">
+            <!-- Los productos se cargarán aquí dinámicamente -->
+        </div>
+    </div>
+</div>
+
+<!-- Mi Kit en construcción -->
+<div class="mi-kit">
+    <h2>📦 Mi Kit Personalizado</h2>
+    <div class="kit-items" id="kit-items">
+        <div class="kit-vacio">
+            Aún no has agregado productos. Selecciona del catálogo o pide ayuda al asistente IA.
+        </div>
+    </div>
+    <div class="kit-total">
+        <span>Total:</span>
+        <span id="kit-total-precio">$0</span>
+    </div>
+    <button class="btn-finalizar" onclick="finalizarKit()" id="btn-finalizar" style="display:none;">
+        Agregar Kit al Carrito
+    </button>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const productos = {{ productos | tojson }};
+    let miKit = [];
+    let categoriaActual = 'limpieza';
+    let historialChat = []; // Historial de conversación para mantener contexto
+
+    // Cargar productos iniciales
+    document.addEventListener('DOMContentLoaded', () => {
+        mostrarProductos('limpieza');
+    });
+
+    // Cambiar categoría
+    function cambiarCategoria(categoria) {
+        categoriaActual = categoria;
+        
+        // Actualizar tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        mostrarProductos(categoria);
+    }
+
+    // Mostrar productos de una categoría
+    function mostrarProductos(categoria) {
+        const grid = document.getElementById('productos-grid');
+        const productosCategoria = productos[categoria];
+        
+        grid.innerHTML = '';
+        
+        productosCategoria.forEach(producto => {
+            const card = document.createElement('div');
+            card.className = 'producto-card';
+            card.innerHTML = `
+                <h4>${producto.nombre}</h4>
+                <div class="precio">${producto.precio.toLocaleString()}</div>
+                <button class="btn-add" onclick='agregarProducto(${JSON.stringify(producto)})'>
+                    + Agregar
+                </button>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // Agregar producto al kit
+    function agregarProducto(producto) {
+        // Verificar si el producto ya existe en el kit
+        const productoExistente = miKit.find(p => p.id === producto.id);
+        
+        if (productoExistente) {
+            // Si existe, aumentar la cantidad
+            productoExistente.cantidad = (productoExistente.cantidad || 1) + 1;
+        } else {
+            // Si no existe, agregarlo con cantidad 1
+            const nuevoProducto = {...producto, cantidad: 1};
+            miKit.push(nuevoProducto);
+        }
+        
+        actualizarMiKit();
+    }
+
+    // Cambiar cantidad de producto en el kit
+    function cambiarCantidadEnKit(index, cambio) {
+        const producto = miKit[index];
+        const nuevaCantidad = (producto.cantidad || 1) + cambio;
+        
+        if (nuevaCantidad < 1) {
+            // Si la cantidad llega a 0, eliminar el producto
+            miKit.splice(index, 1);
+        } else {
+            producto.cantidad = nuevaCantidad;
+        }
+        
+        actualizarMiKit();
+    }
+
+    // Quitar producto del kit
+    function quitarProducto(index) {
+        miKit.splice(index, 1);
+        actualizarMiKit();
+    }
+
+    // Actualizar vista de Mi Kit
+    function actualizarMiKit() {
+        const itemsContainer = document.getElementById('kit-items');
+        const totalPrecio = document.getElementById('kit-total-precio');
+        const btnFinalizar = document.getElementById('btn-finalizar');
+        
+        if (miKit.length === 0) {
+            itemsContainer.innerHTML = `
+                <div class="kit-vacio">
+                    Aún no has agregado productos. Selecciona del catálogo o pide ayuda al asistente IA.
+                </div>
+            `;
+            totalPrecio.textContent = '$0';
+            btnFinalizar.style.display = 'none';
+        } else {
+            itemsContainer.innerHTML = '';
+            let total = 0;
+            
+            miKit.forEach((producto, index) => {
+                total += producto.precio * (producto.cantidad || 1);
+                
+                const item = document.createElement('div');
+                item.className = 'kit-item';
+                item.innerHTML = `
+                    <div class="kit-item-info">
+                        <div class="kit-item-nombre">${producto.nombre}</div>
+                        <div class="kit-item-precio">$${producto.precio.toLocaleString()} c/u</div>
+                    </div>
+                    <div class="kit-item-controls">
+                        <div class="cantidad-controls-kit">
+                            <button class="btn-cantidad-kit" onclick="cambiarCantidadEnKit(${index}, -1)">−</button>
+                            <span class="cantidad-numero-kit">${producto.cantidad || 1}</span>
+                            <button class="btn-cantidad-kit" onclick="cambiarCantidadEnKit(${index}, 1)">+</button>
+                        </div>
+                        <button class="btn-remove" onclick="quitarProducto(${index})">✕</button>
+                    </div>
+                `;
+                itemsContainer.appendChild(item);
+            });
+            
+            totalPrecio.textContent = `$${total.toLocaleString()}`;
+            btnFinalizar.style.display = 'block';
+        }
+    }
+
+    // Enviar mensaje al chat
+    async function enviarMensaje() {
+        const input = document.getElementById('chat-input');
+        const mensaje = input.value.trim();
+        
+        if (!mensaje) return;
+        
+        // Agregar mensaje del usuario al chat visual
+        agregarMensajeChat('user', mensaje);
+        
+        // Agregar mensaje al historial
+        historialChat.push({
+            role: 'user',
+            content: mensaje
+        });
+        
+        input.value = '';
+        
+        // Mostrar indicador de "escribiendo..."
+        const indicadorId = 'typing-' + Date.now();
+        agregarMensajeChat('assistant', '⏳ Pensando...', indicadorId);
+        
+        try {
+            console.log('[CHAT] Enviando mensaje:', mensaje);
+            console.log('[CHAT] Historial tiene', historialChat.length, 'mensajes');
+            
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    mensaje: mensaje,
+                    historial: historialChat.slice(0, -1) // Enviar historial sin el mensaje actual
+                })
+            });
+            
+            console.log('[CHAT] Respuesta recibida, status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('[CHAT] Datos parseados:', data);
+            
+            // Eliminar indicador de "escribiendo..."
+            const typingIndicator = document.getElementById(indicadorId);
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+            
+            // Agregar respuesta del asistente al chat visual
+            if (data.mensaje) {
+                agregarMensajeChat('assistant', data.mensaje);
+                
+                // Agregar respuesta al historial
+                historialChat.push({
+                    role: 'assistant',
+                    content: data.mensaje
+                });
+            }
+            
+            // Si hay opciones de kits, mostrarlas
+            if (data.opciones && data.opciones.length > 0) {
+                console.log('[CHAT] Mostrando', data.opciones.length, 'opciones');
+                mostrarOpcionesKits(data.opciones);
+            } else {
+                console.log('[CHAT] No hay opciones para mostrar');
+            }
+            
+        } catch (error) {
+            console.error('[ERROR] Error en el chat:', error);
+            
+            // Eliminar indicador de "escribiendo..."
+            const typingIndicator = document.getElementById(indicadorId);
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+            
+            agregarMensajeChat('assistant', '❌ Lo siento, hubo un error al comunicarme con el asistente. Verifica la consola del servidor para más detalles.');
+        }
+    }
+
+    // Agregar mensaje al chat
+    function agregarMensajeChat(tipo, texto, customId) {
+        const chatMessages = document.getElementById('chat-messages');
+        const mensaje = document.createElement('div');
+        mensaje.className = `message ${tipo}`;
+        if (customId) {
+            mensaje.id = customId;
+        }
+        mensaje.textContent = texto;
+        chatMessages.appendChild(mensaje);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Mostrar opciones de kits sugeridas por la IA
+    function mostrarOpcionesKits(opciones) {
+        const chatMessages = document.getElementById('chat-messages');
+        
+        const opcionesContainer = document.createElement('div');
+        opcionesContainer.className = 'opciones-ia-container';
+        opcionesContainer.innerHTML = '<strong style="color: #6FA8DC; display: block; margin-bottom: 1rem;">💡 Opciones sugeridas:</strong>';
+        
+        opciones.forEach((opcion, index) => {
+            const opcionCard = document.createElement('div');
+            opcionCard.className = 'opcion-ia-card';
+            
+            let productosHTML = '';
+            opcion.productos_completos.forEach(prod => {
+                productosHTML += `<div class="opcion-producto">• ${prod.nombre} (x${prod.cantidad}) - ${prod.precio.toLocaleString()}</div>`;
+            });
+            
+            opcionCard.innerHTML = `
+                <div style="font-weight: bold; color: #6FA8DC; margin-bottom: 0.5rem;">
+                    ${opcion.nombre}
+                </div>
+                <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">
+                    ${opcion.descripcion}
+                </div>
+                <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    ${productosHTML}
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                    <span style="font-weight: bold; color: #6FA8DC; font-size: 1.2rem;">
+                        ${opcion.precio_total.toLocaleString()}
+                    </span>
+                    <button onclick="agregarOpcionAlKit(${index})" class="btn-agregar-opcion">
+                        ✓ Agregar al Kit
+                    </button>
+                </div>
+            `;
+            
+            opcionesContainer.appendChild(opcionCard);
+        });
+        
+        chatMessages.appendChild(opcionesContainer);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Guardar opciones para poder agregarlas después
+        window.opcionesActuales = opciones;
+    }
+
+    // Agregar una opción completa al kit
+    function agregarOpcionAlKit(index) {
+        if (!window.opcionesActuales || !window.opcionesActuales[index]) {
+            alert('Error: Opción no encontrada');
+            return;
+        }
+        
+        const opcion = window.opcionesActuales[index];
+        
+        // Agregar cada producto de la opción al kit
+        opcion.productos_completos.forEach(producto => {
+            const productoExistente = miKit.find(p => p.id === producto.id);
+            
+            if (productoExistente) {
+                // Si existe, aumentar la cantidad
+                productoExistente.cantidad = (productoExistente.cantidad || 1) + producto.cantidad;
+            } else {
+                // Si no existe, agregarlo
+                miKit.push({...producto, cantidad: producto.cantidad});
+            }
+        });
+        
+        actualizarMiKit();
+        
+        // Mensaje de confirmación
+        agregarMensajeChat('assistant', `✅ He agregado "${opcion.nombre}" a tu kit. Puedes ajustar las cantidades si lo deseas.`);
+    }
+
+    // Finalizar y agregar kit al carrito
+    async function finalizarKit() {
+        if (miKit.length === 0) {
+            alert('Tu kit está vacío. Agrega productos primero.');
+            return;
+        }
+        
+        // Calcular el total considerando las cantidades
+        const total = miKit.reduce((sum, p) => sum + (p.precio * (p.cantidad || 1)), 0);
+        
+        try {
+            const response = await fetch('/api/carrito/agregar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tipo: 'kit_customizado',
+                    productos: miKit,
+                    precio: total,
+                    nombre: 'Kit Personalizado'
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('¡Kit agregado al carrito exitosamente! ✅');
+                
+                // Limpiar el kit
+                miKit = [];
+                actualizarMiKit();
+                
+                // Actualizar contador del carrito
+                actualizarCarrito();
+            }
+        } catch (error) {
+            console.error('Error al agregar kit:', error);
+            alert('Hubo un error al agregar el kit al carrito');
+        }
+    }
+</script>
+{% endblock %}

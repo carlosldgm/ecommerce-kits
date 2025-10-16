@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+<style>
+    .kit-detail {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .kit-header {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .kit-image-large {
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .kit-info {
+        flex: 1;
+    }
+
+    .kit-info h2 {
+        color: #6FA8DC;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .kit-info p {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .precio-grande {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+        margin: 1rem 0;
+    }
+
+    .productos-lista {
+        margin-top: 2rem;
+    }
+
+    .productos-lista h3 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #A8D8EA;
+        padding-bottom: 0.5rem;
+    }
+
+    .producto-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+        align-items: center;
+    }
+
+    .producto-item:last-child {
+        border-bottom: none;
+    }
+
+    .producto-nombre {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .producto-cantidad {
+        background: #6FA8DC;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        margin-left: 1rem;
+    }
+
+    .producto-precio {
+        color: #666;
+        font-weight: bold;
+    }
+
+    .btn-agregar {
+        background: #7CB9E8;
+        color: white;
+        border: none;
+        padding: 1rem 3rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        margin-top: 2rem;
+        box-shadow: 0 4px 10px rgba(124, 185, 232, 0.3);
+    }
+
+    .btn-agregar:hover {
+        background: #6FA8DC;
+        transform: scale(1.05);
+    }
+
+    .btn-volver {
+        display: inline-block;
+        color: #6FA8DC;
+        text-decoration: none;
+        margin-bottom: 1rem;
+        font-weight: bold;
+        background: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border: 2px solid #6FA8DC;
+    }
+
+    .btn-volver:hover {
+        background: #E8F4F8;
+    }
+
+    .success-message {
+        background: #4caf50;
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-top: 1rem;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/" class="btn-volver">← Volver al inicio</a>
+
+<div class="kit-detail">
+    <div class="kit-header">
+        {% if kit.imagen.startswith('imgs/') or kit.imagen.startswith('static/') %}
+        <img src="{{ url_for('static', filename=kit.imagen) }}" alt="{{ kit.nombre }}" class="kit-image-large">
+        {% else %}
+        <img src="{{ kit.imagen }}" alt="{{ kit.nombre }}" class="kit-image-large">
+        {% endif %}
+        <div class="kit-info">
+            <h2>{{ kit.nombre }}</h2>
+            <p>{{ kit.descripcion }}</p>
+            <div class="precio-grande">${{ '{:,}'.format(kit.precio) }}</div>
+            <button class="btn-agregar" onclick="agregarKitCarrito()">
+                🛒 Agregar al Carrito
+            </button>
+            <div class="success-message" id="success-msg">
+                ✅ Kit agregado al carrito exitosamente
+            </div>
+        </div>
+    </div>
+
+    <div class="productos-lista">
+        <h3>📦 Contenido del Kit</h3>
+        {% for producto in productos %}
+        <div class="producto-item">
+            <div>
+                <span class="producto-nombre">{{ producto.nombre }}</span>
+                <span class="producto-cantidad">x{{ producto.cantidad }}</span>
+            </div>
+            <span class="producto-precio">${{ '{:,}'.format(producto.precio) }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function agregarKitCarrito() {
+        try {
+            // Preparar datos del kit con productos
+            const kitData = {
+                tipo: 'kit_predefinido',
+                id: '{{ kit.id }}',
+                nombre: '{{ kit.nombre }}',
+                precio: {{ kit.precio }},
+                productos: [
+                    {% for producto in productos %}
+                    {
+                        id: '{{ producto.id }}',
+                        nombre: '{{ producto.nombre }}',
+                        precio: {{ producto.precio }},
+                        categoria: '{{ producto.categoria }}',
+                        cantidad: {{ producto.cantidad }}
+                    }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            };
+
+            const response = await fetch('/api/carrito/agregar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(kitData)
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                const msg = document.getElementById('success-msg');
+                msg.style.display = 'block';
+                
+                actualizarCarrito();
+                
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error al agregar al carrito:', error);
+            alert('Hubo un error al agregar el kit al carrito');
+        }
+    }
+</script>
+{% endblock %}
