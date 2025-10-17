@@ -2,474 +2,135 @@
 
 {% block extra_styles %}
 <style>
-    .custom-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        margin-bottom: 2rem;
+    /* Ajustes específicos para esta página */
+    .chat-message-user {
+        background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
     }
-
-    @media (max-width: 968px) {
-        .custom-container {
-            grid-template-columns: 1fr;
-        }
+    
+    .product-card {
+        transition: all 0.3s ease;
     }
-
-    .panel {
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-
-    .panel h2 {
-        color: #6FA8DC;
-        margin-bottom: 1.5rem;
-        font-size: 1.8rem;
-    }
-
-    /* Estilos del Chat */
-    .chat-container {
-        height: 500px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        border: 2px solid #f0f0f0;
-        border-radius: 10px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        background: #fafafa;
-    }
-
-    .message {
-        margin-bottom: 1rem;
-        padding: 0.8rem;
-        border-radius: 10px;
-        max-width: 80%;
-    }
-
-    .message.user {
-        background: #6FA8DC;
-        color: white;
-        margin-left: auto;
-    }
-
-    .message.assistant {
-        background: #e0e0e0;
-        color: #333;
-    }
-
-    .chat-suggestions {
-        background: #E8F4F8;
-        border: 1px dashed #A8D8EA;
-        border-radius: 10px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        font-size: 0.9rem;
-        color: #555;
-    }
-
-    .chat-suggestions strong {
-        color: #6FA8DC;
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-
-    .chat-input-container {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .chat-input {
-        flex: 1;
-        padding: 0.8rem;
-        border: 2px solid #ddd;
-        border-radius: 25px;
-        font-size: 1rem;
-        outline: none;
-    }
-
-    .chat-input:focus {
-        border-color: #A8D8EA;
-    }
-
-    .btn-send {
-        background: #7CB9E8;
-        color: white;
-        border: none;
-        padding: 0.8rem 1.5rem;
-        border-radius: 25px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.3s;
-        box-shadow: 0 2px 5px rgba(124, 185, 232, 0.3);
-    }
-
-    .btn-send:hover {
-        background: #6FA8DC;
-    }
-
-    /* Estilos del Catálogo */
-    .categorias-tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .tab-btn {
-        background: #f0f0f0;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.3s;
-    }
-
-    .tab-btn.active {
-        background: #7CB9E8;
-        color: white;
-        font-weight: bold;
-    }
-
-    .productos-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        max-height: 400px;
-        overflow-y: auto;
-    }
-
-    .producto-card {
-        border: 2px solid #eee;
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: center;
-        transition: all 0.3s;
-        cursor: pointer;
-    }
-
-    .producto-card:hover {
-        border-color: #A8D8EA;
-        transform: translateY(-5px);
-    }
-
-    .producto-card h4 {
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
-
-    .producto-card .precio {
-        color: #6FA8DC;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    .btn-add {
-        background: #7CB9E8;
-        color: white;
-        border: none;
-        padding: 0.4rem 1rem;
-        border-radius: 15px;
-        cursor: pointer;
-        font-size: 0.85rem;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
-
-    .btn-add:hover {
-        background: #6FA8DC;
-    }
-
-    /* Mi Kit */
-    .mi-kit {
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        margin-top: 2rem;
-    }
-
-    .mi-kit h2 {
-        color: #6FA8DC;
-        margin-bottom: 1rem;
-    }
-
-    .kit-items {
-        max-height: 300px;
-        overflow-y: auto;
-        margin-bottom: 1rem;
-    }
-
-    .kit-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.8rem;
-        border-bottom: 1px solid #eee;
-    }
-
-    .kit-item-info {
-        flex: 1;
-    }
-
-    .kit-item-nombre {
-        font-weight: 500;
-        color: #333;
-    }
-
-    .kit-item-precio {
-        color: #666;
-        font-size: 0.9rem;
-        margin-right: 1rem;
-    }
-
-    .kit-item-controls {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .cantidad-controls-kit {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: #f0f0f0;
-        border-radius: 20px;
-        padding: 0.2rem 0.5rem;
-    }
-
-    .btn-cantidad-kit {
-        background: #7CB9E8;
-        color: white;
-        border: none;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-
-    .btn-cantidad-kit:hover:not(:disabled) {
-        background: #6FA8DC;
-        transform: scale(1.1);
-    }
-
-    .btn-cantidad-kit:disabled {
-        background: #ddd;
-        color: #999;
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-
-    .cantidad-numero-kit {
-        font-weight: bold;
-        color: #333;
-        min-width: 25px;
-        text-align: center;
-        font-size: 1rem;
-    }
-
-    .btn-remove {
-        background: #f44336;
-        color: white;
-        border: none;
-        padding: 0.4rem 0.8rem;
-        border-radius: 15px;
-        cursor: pointer;
-        font-size: 0.85rem;
-    }
-
-    .kit-total {
-        border-top: 2px solid #A8D8EA;
-        padding-top: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #6FA8DC;
-    }
-
-    .btn-finalizar {
-        background: #27ae60;
-        color: white;
-        border: none;
-        padding: 1rem 2rem;
-        border-radius: 25px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 1rem;
-        transition: background 0.3s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .btn-finalizar:hover {
-        background: #229954;
-    }
-
-    .kit-vacio {
-        text-align: center;
-        color: #999;
-        padding: 2rem;
-    }
-
-    .opciones-ia-container {
-        margin: 1rem 0;
-        padding: 1rem;
-        background: #E8F4F8;
-        border-radius: 10px;
-        border: 2px solid #A8D8EA;
-    }
-
-    .opcion-ia-card {
-        background: white;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        border: 1px solid #eee;
-        transition: all 0.3s;
-    }
-
-    .opcion-ia-card:hover {
-        border-color: #A8D8EA;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .opcion-ia-card:last-child {
-        margin-bottom: 0;
-    }
-
-    .opcion-producto {
-        font-size: 0.85rem;
-        color: #555;
-        padding: 0.2rem 0;
-    }
-
-    .btn-agregar-opcion {
-        background: #27ae60;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-
-    .btn-agregar-opcion:hover {
-        background: #229954;
-        transform: scale(1.05);
-    }
-
-    .typing-indicator {
-        opacity: 0.7;
-        font-style: italic;
-    }
-
-    .btn-volver {
-        display: inline-block;
-        color: #6FA8DC;
-        text-decoration: none;
-        margin-bottom: 1rem;
-        font-weight: bold;
-        background: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border: 2px solid #6FA8DC;
-    }
-
-    .btn-volver:hover {
-        background: #E8F4F8;
+    
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<a href="/" class="btn-volver">← Volver al inicio</a>
+<div class="mb-6">
+    <a href="/" class="inline-flex items-center text-sm text-text-muted-light dark:text-text-muted-dark hover:text-sky-500 dark:hover:text-sky-500 transition-colors">
+        <span class="material-symbols-outlined mr-1 text-base">arrow_back</span>
+        Volver al Inicio
+    </a>
+</div>
 
-<div class="custom-container">
-    <!-- Panel Izquierdo: Chat con IA -->
-    <div class="panel">
-        <h2>💬 Asistente IA</h2>
-        
-        <div class="chat-suggestions">
-            <strong>💡 Puedes pedirme:</strong>
-            • "Arma una caja con $20,000 de productos de limpieza"<br>
-            • "Necesito snacks para picoteo con presupuesto de $15,000"<br>
-            • "Dame opciones de productos de belleza hasta $30,000"<br>
-            • "Quiero artículos para bebé, tengo $25,000"
-        </div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <!-- Columna Izquierda: Chat IA + Mi Kit -->
+    <div class="lg:col-span-1 space-y-8">
+        <!-- Panel del Chat con IA -->
+        <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow p-6">
+            <div class="flex items-center mb-4">
+                <span class="material-symbols-outlined text-sky-500 mr-3 text-3xl">smart_toy</span>
+                <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Asistente IA</h2>
+            </div>
+            
+            <div class="bg-sky-50 dark:bg-sky-900/20 p-4 rounded-md text-sm text-sky-800 dark:text-sky-300 mb-4">
+                <p class="font-semibold mb-2">Puedes pedirme:</p>
+                <ul class="list-disc list-inside space-y-1 text-xs">
+                    <li>"Arma una caja con $20.000 de productos de limpieza"</li>
+                    <li>"Necesito snacks para picoteo con presupuesto de $15.000"</li>
+                    <li>"Dame opciones de productos de belleza hasta $30.000"</li>
+                    <li>"Quiero artículos para bebé, tengo $25.000"</li>
+                </ul>
+            </div>
 
-        <div class="chat-container">
-            <div class="chat-messages" id="chat-messages">
-                <div class="message assistant">
-                    ¡Hola! 👋 Soy tu asistente para armar kits personalizados. 
-                    Cuéntame qué tipo de productos necesitas y cuál es tu presupuesto, 
-                    y te daré 3 opciones perfectas para ti.
+            <div id="chat-messages" class="space-y-4 mb-4 max-h-64 overflow-y-auto">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm flex-shrink-0">
+                        <span class="material-symbols-outlined text-base">spark</span>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex-1">
+                        <p class="text-sm text-text-light dark:text-text-dark">¡Hola! 👋 Soy tu asistente para armar kits personalizados. Cuéntame qué tipo de productos necesitas y cuál es tu presupuesto, y te daré 3 opciones perfectas para ti.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="chat-input-container">
+            <div class="flex items-center">
                 <input 
-                    type="text" 
-                    class="chat-input" 
-                    id="chat-input" 
-                    placeholder="Escribe tu mensaje aquí..."
+                    id="chat-input"
+                    class="w-full bg-gray-100 dark:bg-gray-700 border-transparent focus:border-sky-500 focus:ring-sky-500 rounded-l-md text-sm px-4 py-2.5" 
+                    placeholder="Escribe tu mensaje aquí..." 
+                    type="text"
                     onkeypress="if(event.key === 'Enter') enviarMensaje()"
-                >
-                <button class="btn-send" onclick="enviarMensaje()">Enviar</button>
+                />
+                <button onclick="enviarMensaje()" class="bg-sky-500 text-white p-2.5 rounded-r-md hover:bg-sky-600 transition-colors">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
             </div>
+        </div>
+
+        <!-- Panel Mi Kit Personalizado -->
+        <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow p-6">
+            <div class="flex items-center mb-4">
+                <span class="material-symbols-outlined text-sky-500 mr-3 text-3xl">inventory_2</span>
+                <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Mi Kit Personalizado</h2>
+            </div>
+            
+            <div id="kit-items" class="space-y-4 mb-4 max-h-64 overflow-y-auto">
+                <div class="text-center text-text-muted-light dark:text-text-muted-dark py-8 text-sm">
+                    Aún no has agregado productos. Selecciona del catálogo o pide ayuda al asistente IA.
+                </div>
+            </div>
+            
+            <div class="border-t border-border-light dark:border-border-dark my-6"></div>
+            
+            <div class="flex justify-between items-center mb-6">
+                <p class="text-lg font-semibold text-text-light dark:text-text-dark">Total:</p>
+                <p id="kit-total-precio" class="text-2xl font-bold text-sky-500">$0</p>
+            </div>
+            
+            <button 
+                id="btn-finalizar"
+                onclick="finalizarKit()"
+                class="w-full bg-green-500 text-white font-bold py-3 rounded-md flex items-center justify-center space-x-2 hover:bg-green-600 transition-colors hidden">
+                <span class="material-symbols-outlined">add_shopping_cart</span>
+                <span>Agregar Kit al Carrito</span>
+            </button>
         </div>
     </div>
 
-    <!-- Panel Derecho: Catálogo de Productos -->
-    <div class="panel">
-        <h2>🛍️ Catálogo de Productos</h2>
-        
-        <div class="categorias-tabs">
-            <button class="tab-btn active" onclick="cambiarCategoria('limpieza')">🧼 Limpieza</button>
-            <button class="tab-btn" onclick="cambiarCategoria('snacks')">🍿 Snacks</button>
-            <button class="tab-btn" onclick="cambiarCategoria('belleza')">💄 Belleza</button>
-            <button class="tab-btn" onclick="cambiarCategoria('bebe')">👶 Bebé</button>
+    <!-- Columna Derecha: Catálogo -->
+    <div class="lg:col-span-2 bg-surface-light dark:bg-surface-dark rounded-lg shadow p-6">
+        <div class="flex items-center mb-6">
+            <span class="material-symbols-outlined text-sky-500 mr-3 text-3xl">storefront</span>
+            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Catálogo de Productos</h2>
         </div>
-
-        <div class="productos-grid" id="productos-grid">
+        
+        <div class="flex flex-wrap gap-2 mb-6">
+            <button onclick="cambiarCategoria('limpieza')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-base">cleaning_services</span>
+                Limpieza
+            </button>
+            <button onclick="cambiarCategoria('snacks')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-base">fastfood</span>
+                Snacks
+            </button>
+            <button onclick="cambiarCategoria('belleza')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-base">face</span>
+                Belleza
+            </button>
+            <button onclick="cambiarCategoria('bebe')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-base">child_care</span>
+                Bebé
+            </button>
+        </div>
+        
+        <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             <!-- Los productos se cargarán aquí dinámicamente -->
         </div>
     </div>
-</div>
-
-<!-- Mi Kit en construcción -->
-<div class="mi-kit">
-    <h2>📦 Mi Kit Personalizado</h2>
-    <div class="kit-items" id="kit-items">
-        <div class="kit-vacio">
-            Aún no has agregado productos. Selecciona del catálogo o pide ayuda al asistente IA.
-        </div>
-    </div>
-    <div class="kit-total">
-        <span>Total:</span>
-        <span id="kit-total-precio">$0</span>
-    </div>
-    <button class="btn-finalizar" onclick="finalizarKit()" id="btn-finalizar" style="display:none;">
-        Agregar Kit al Carrito
-    </button>
 </div>
 {% endblock %}
 
@@ -478,27 +139,36 @@
     const productos = {{ productos | tojson }};
     let miKit = [];
     let categoriaActual = 'limpieza';
-    let historialChat = []; // Historial de conversación para mantener contexto
+    let historialChat = [];
 
-    // Cargar productos iniciales
+    const iconosCategoria = {
+        'limpieza': 'cleaning_services',
+        'snacks': 'fastfood',
+        'belleza': 'face',
+        'bebe': 'child_care'
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
         mostrarProductos('limpieza');
     });
 
-    // Cambiar categoría
     function cambiarCategoria(categoria) {
         categoriaActual = categoria;
         
-        // Actualizar tabs
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
+        const categorias = ['limpieza', 'snacks', 'belleza', 'bebe'];
+        const botones = document.querySelectorAll('.tab-btn');
+        
+        categorias.forEach((cat, index) => {
+            if (cat === categoria) {
+                botones[index].className = 'tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-full transition-colors';
+            } else {
+                botones[index].className = 'tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors';
+            }
         });
-        event.target.classList.add('active');
         
         mostrarProductos(categoria);
     }
 
-    // Mostrar productos de una categoría
     function mostrarProductos(categoria) {
         const grid = document.getElementById('productos-grid');
         const productosCategoria = productos[categoria];
@@ -507,42 +177,38 @@
         
         productosCategoria.forEach(producto => {
             const card = document.createElement('div');
-            card.className = 'producto-card';
+            card.className = 'product-card border border-border-light dark:border-border-dark rounded-lg p-4 flex flex-col justify-between hover:shadow-lg';
             card.innerHTML = `
-                <h4>${producto.nombre}</h4>
-                <div class="precio">${producto.precio.toLocaleString()}</div>
-                <button class="btn-add" onclick='agregarProducto(${JSON.stringify(producto)})'>
-                    + Agregar
+                <div>
+                    <p class="font-semibold text-text-light dark:text-text-dark text-sm mb-2">${producto.nombre}</p>
+                    <p class="text-lg font-bold text-sky-500 mb-3">$${producto.precio.toLocaleString()}</p>
+                </div>
+                <button onclick='agregarProducto(${JSON.stringify(producto)})' class="w-full flex items-center justify-center gap-2 bg-sky-100 text-sky-600 font-semibold py-2 rounded-md hover:bg-sky-200 transition-colors">
+                    <span class="material-symbols-outlined text-base">add</span>
+                    <span class="text-sm">Agregar</span>
                 </button>
             `;
             grid.appendChild(card);
         });
     }
 
-    // Agregar producto al kit
     function agregarProducto(producto) {
-        // Verificar si el producto ya existe en el kit
         const productoExistente = miKit.find(p => p.id === producto.id);
         
         if (productoExistente) {
-            // Si existe, aumentar la cantidad
             productoExistente.cantidad = (productoExistente.cantidad || 1) + 1;
         } else {
-            // Si no existe, agregarlo con cantidad 1
-            const nuevoProducto = {...producto, cantidad: 1};
-            miKit.push(nuevoProducto);
+            miKit.push({...producto, cantidad: 1});
         }
         
         actualizarMiKit();
     }
 
-    // Cambiar cantidad de producto en el kit
     function cambiarCantidadEnKit(index, cambio) {
         const producto = miKit[index];
         const nuevaCantidad = (producto.cantidad || 1) + cambio;
         
         if (nuevaCantidad < 1) {
-            // Si la cantidad llega a 0, eliminar el producto
             miKit.splice(index, 1);
         } else {
             producto.cantidad = nuevaCantidad;
@@ -551,13 +217,11 @@
         actualizarMiKit();
     }
 
-    // Quitar producto del kit
     function quitarProducto(index) {
         miKit.splice(index, 1);
         actualizarMiKit();
     }
 
-    // Actualizar vista de Mi Kit
     function actualizarMiKit() {
         const itemsContainer = document.getElementById('kit-items');
         const totalPrecio = document.getElementById('kit-total-precio');
@@ -565,12 +229,12 @@
         
         if (miKit.length === 0) {
             itemsContainer.innerHTML = `
-                <div class="kit-vacio">
+                <div class="text-center text-text-muted-light dark:text-text-muted-dark py-8 text-sm">
                     Aún no has agregado productos. Selecciona del catálogo o pide ayuda al asistente IA.
                 </div>
             `;
             totalPrecio.textContent = '$0';
-            btnFinalizar.style.display = 'none';
+            btnFinalizar.classList.add('hidden');
         } else {
             itemsContainer.innerHTML = '';
             let total = 0;
@@ -579,40 +243,40 @@
                 total += producto.precio * (producto.cantidad || 1);
                 
                 const item = document.createElement('div');
-                item.className = 'kit-item';
+                item.className = 'flex items-center justify-between';
                 item.innerHTML = `
-                    <div class="kit-item-info">
-                        <div class="kit-item-nombre">${producto.nombre}</div>
-                        <div class="kit-item-precio">$${producto.precio.toLocaleString()} c/u</div>
+                    <div class="flex-1 min-w-0 pr-4">
+                        <p class="font-medium text-text-light dark:text-text-dark text-sm truncate">${producto.nombre}</p>
+                        <p class="text-xs text-text-muted-light dark:text-text-muted-dark">$${producto.precio.toLocaleString()} c/u</p>
                     </div>
-                    <div class="kit-item-controls">
-                        <div class="cantidad-controls-kit">
-                            <button class="btn-cantidad-kit" onclick="cambiarCantidadEnKit(${index}, -1)">−</button>
-                            <span class="cantidad-numero-kit">${producto.cantidad || 1}</span>
-                            <button class="btn-cantidad-kit" onclick="cambiarCantidadEnKit(${index}, 1)">+</button>
-                        </div>
-                        <button class="btn-remove" onclick="quitarProducto(${index})">✕</button>
+                    <div class="flex items-center space-x-2 flex-shrink-0">
+                        <button onclick="cambiarCantidadEnKit(${index}, -1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-sm">
+                            -
+                        </button>
+                        <span class="font-semibold w-4 text-center text-sm">${producto.cantidad || 1}</span>
+                        <button onclick="cambiarCantidadEnKit(${index}, 1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-sm">
+                            +
+                        </button>
+                        <button onclick="quitarProducto(${index})" class="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors">
+                            <span class="material-symbols-outlined text-base">delete</span>
+                        </button>
                     </div>
                 `;
                 itemsContainer.appendChild(item);
             });
             
             totalPrecio.textContent = `$${total.toLocaleString()}`;
-            btnFinalizar.style.display = 'block';
+            btnFinalizar.classList.remove('hidden');
         }
     }
 
-    // Enviar mensaje al chat
     async function enviarMensaje() {
         const input = document.getElementById('chat-input');
         const mensaje = input.value.trim();
         
         if (!mensaje) return;
         
-        // Agregar mensaje del usuario al chat visual
         agregarMensajeChat('user', mensaje);
-        
-        // Agregar mensaje al historial
         historialChat.push({
             role: 'user',
             content: mensaje
@@ -620,14 +284,10 @@
         
         input.value = '';
         
-        // Mostrar indicador de "escribiendo..."
         const indicadorId = 'typing-' + Date.now();
         agregarMensajeChat('assistant', '⏳ Pensando...', indicadorId);
         
         try {
-            console.log('[CHAT] Enviando mensaje:', mensaje);
-            console.log('[CHAT] Historial tiene', historialChat.length, 'mensajes');
-            
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
@@ -635,103 +295,100 @@
                 },
                 body: JSON.stringify({ 
                     mensaje: mensaje,
-                    historial: historialChat.slice(0, -1) // Enviar historial sin el mensaje actual
+                    historial: historialChat.slice(0, -1)
                 })
             });
-            
-            console.log('[CHAT] Respuesta recibida, status:', response.status);
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
             const data = await response.json();
-            console.log('[CHAT] Datos parseados:', data);
             
-            // Eliminar indicador de "escribiendo..."
             const typingIndicator = document.getElementById(indicadorId);
             if (typingIndicator) {
                 typingIndicator.remove();
             }
             
-            // Agregar respuesta del asistente al chat visual
             if (data.mensaje) {
                 agregarMensajeChat('assistant', data.mensaje);
-                
-                // Agregar respuesta al historial
                 historialChat.push({
                     role: 'assistant',
                     content: data.mensaje
                 });
             }
             
-            // Si hay opciones de kits, mostrarlas
             if (data.opciones && data.opciones.length > 0) {
-                console.log('[CHAT] Mostrando', data.opciones.length, 'opciones');
                 mostrarOpcionesKits(data.opciones);
-            } else {
-                console.log('[CHAT] No hay opciones para mostrar');
             }
             
         } catch (error) {
             console.error('[ERROR] Error en el chat:', error);
             
-            // Eliminar indicador de "escribiendo..."
             const typingIndicator = document.getElementById(indicadorId);
             if (typingIndicator) {
                 typingIndicator.remove();
             }
             
-            agregarMensajeChat('assistant', '❌ Lo siento, hubo un error al comunicarme con el asistente. Verifica la consola del servidor para más detalles.');
+            agregarMensajeChat('assistant', '❌ Lo siento, hubo un error al comunicarme con el asistente.');
         }
     }
 
-    // Agregar mensaje al chat
     function agregarMensajeChat(tipo, texto, customId) {
         const chatMessages = document.getElementById('chat-messages');
         const mensaje = document.createElement('div');
-        mensaje.className = `message ${tipo}`;
+        mensaje.className = 'flex items-start space-x-3';
+        
+        if (tipo === 'user') {
+            mensaje.innerHTML = `
+                <div class="chat-message-user p-3 rounded-lg rounded-tr-none flex-1 ml-auto max-w-[85%]">
+                    <p class="text-sm text-white">${texto}</p>
+                </div>
+            `;
+        } else {
+            mensaje.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm flex-shrink-0">
+                    <span class="material-symbols-outlined text-base">spark</span>
+                </div>
+                <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex-1 max-w-[85%]">
+                    <p class="text-sm text-text-light dark:text-text-dark">${texto}</p>
+                </div>
+            `;
+        }
+        
         if (customId) {
             mensaje.id = customId;
         }
-        mensaje.textContent = texto;
+        
         chatMessages.appendChild(mensaje);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // Mostrar opciones de kits sugeridas por la IA
     function mostrarOpcionesKits(opciones) {
         const chatMessages = document.getElementById('chat-messages');
         
         const opcionesContainer = document.createElement('div');
-        opcionesContainer.className = 'opciones-ia-container';
-        opcionesContainer.innerHTML = '<strong style="color: #6FA8DC; display: block; margin-bottom: 1rem;">💡 Opciones sugeridas:</strong>';
+        opcionesContainer.className = 'space-y-3 w-full';
+        opcionesContainer.innerHTML = '<p class="font-semibold text-sky-600 dark:text-sky-400 text-sm mb-2">💡 Opciones sugeridas:</p>';
         
         opciones.forEach((opcion, index) => {
             const opcionCard = document.createElement('div');
-            opcionCard.className = 'opcion-ia-card';
+            opcionCard.className = 'bg-sky-50 dark:bg-sky-900/20 rounded-lg p-4 border border-sky-200 dark:border-sky-700';
             
             let productosHTML = '';
             opcion.productos_completos.forEach(prod => {
-                productosHTML += `<div class="opcion-producto">• ${prod.nombre} (x${prod.cantidad}) - ${prod.precio.toLocaleString()}</div>`;
+                productosHTML += `<div class="text-xs text-text-muted-light dark:text-text-muted-dark">• ${prod.nombre} (x${prod.cantidad}) - $${prod.precio.toLocaleString()}</div>`;
             });
             
             opcionCard.innerHTML = `
-                <div style="font-weight: bold; color: #6FA8DC; margin-bottom: 0.5rem;">
-                    ${opcion.nombre}
-                </div>
-                <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">
-                    ${opcion.descripcion}
-                </div>
-                <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">
-                    ${productosHTML}
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
-                    <span style="font-weight: bold; color: #6FA8DC; font-size: 1.2rem;">
-                        ${opcion.precio_total.toLocaleString()}
-                    </span>
-                    <button onclick="agregarOpcionAlKit(${index})" class="btn-agregar-opcion">
-                        ✓ Agregar al Kit
+                <div class="font-bold text-sky-700 dark:text-sky-300 mb-1">${opcion.nombre}</div>
+                <div class="text-xs text-text-muted-light dark:text-text-muted-dark mb-2">${opcion.descripcion}</div>
+                <div class="mb-3 space-y-1">${productosHTML}</div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold text-sky-600 dark:text-sky-400">$${opcion.precio_total.toLocaleString()}</span>
+                    <button onclick="agregarOpcionAlKit(${index})" class="bg-sky-500 text-white px-3 py-1.5 rounded-md text-xs font-semibold hover:bg-sky-600 transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">add_circle</span>
+                        Agregar
                     </button>
                 </div>
             `;
@@ -742,11 +399,9 @@
         chatMessages.appendChild(opcionesContainer);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         
-        // Guardar opciones para poder agregarlas después
         window.opcionesActuales = opciones;
     }
 
-    // Agregar una opción completa al kit
     function agregarOpcionAlKit(index) {
         if (!window.opcionesActuales || !window.opcionesActuales[index]) {
             alert('Error: Opción no encontrada');
@@ -755,33 +410,26 @@
         
         const opcion = window.opcionesActuales[index];
         
-        // Agregar cada producto de la opción al kit
         opcion.productos_completos.forEach(producto => {
             const productoExistente = miKit.find(p => p.id === producto.id);
             
             if (productoExistente) {
-                // Si existe, aumentar la cantidad
                 productoExistente.cantidad = (productoExistente.cantidad || 1) + producto.cantidad;
             } else {
-                // Si no existe, agregarlo
                 miKit.push({...producto, cantidad: producto.cantidad});
             }
         });
         
         actualizarMiKit();
-        
-        // Mensaje de confirmación
         agregarMensajeChat('assistant', `✅ He agregado "${opcion.nombre}" a tu kit. Puedes ajustar las cantidades si lo deseas.`);
     }
 
-    // Finalizar y agregar kit al carrito
     async function finalizarKit() {
         if (miKit.length === 0) {
             alert('Tu kit está vacío. Agrega productos primero.');
             return;
         }
         
-        // Calcular el total considerando las cantidades
         const total = miKit.reduce((sum, p) => sum + (p.precio * (p.cantidad || 1)), 0);
         
         try {
@@ -802,12 +450,8 @@
             
             if (data.success) {
                 alert('¡Kit agregado al carrito exitosamente! ✅');
-                
-                // Limpiar el kit
                 miKit = [];
                 actualizarMiKit();
-                
-                // Actualizar contador del carrito
                 actualizarCarrito();
             }
         } catch (error) {

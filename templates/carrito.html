@@ -2,484 +2,116 @@
 
 {% block title %}Carrito - KitBox{% endblock %}
 
-{% block extra_styles %}
-<style>
-    .carrito-container {
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .carrito-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #A8D8EA;
-    }
-
-    .carrito-header h2 {
-        color: #6FA8DC;
-        font-size: 2rem;
-        margin: 0;
-    }
-
-    .btn-volver {
-        display: inline-block;
-        color: #6FA8DC;
-        text-decoration: none;
-        font-weight: bold;
-        background: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border: 2px solid #6FA8DC;
-    }
-
-    .btn-volver:hover {
-        background: #E8F4F8;
-    }
-
-    .carrito-vacio {
-        text-align: center;
-        padding: 4rem 2rem;
-    }
-
-    .carrito-vacio h3 {
-        color: #666;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .carrito-vacio p {
-        color: #999;
-        margin-bottom: 2rem;
-    }
-
-    .btn-seguir-comprando {
-        display: inline-block;
-        background: #7CB9E8;
-        color: white;
-        padding: 1rem 2rem;
-        border-radius: 25px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background 0.3s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .btn-seguir-comprando:hover {
-        background: #6FA8DC;
-    }
-
-    .carrito-items {
-        margin-bottom: 2rem;
-    }
-
-    .carrito-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 1.5rem;
-        border: 2px solid #eee;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-        transition: all 0.3s;
-    }
-
-    .carrito-item:hover {
-        border-color: #A8D8EA;
-    }
-
-    .item-info {
-        flex: 1;
-    }
-
-    .item-actions {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 1rem;
-    }
-
-    .productos-incluidos {
-        margin-top: 1rem;
-        padding: 1rem;
-        background: #f9f9f9;
-        border-radius: 8px;
-        border-left: 3px solid #A8D8EA;
-    }
-
-    .productos-incluidos strong {
-        color: #6FA8DC;
-        display: block;
-        margin-bottom: 0.8rem;
-        font-size: 0.95rem;
-    }
-
-    .productos-lista-detalle {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .producto-detalle-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.8rem;
-        background: white;
-        border-radius: 5px;
-        transition: all 0.2s;
-        gap: 1rem;
-    }
-
-    .producto-detalle-item:hover {
-        background: #E8F4F8;
-    }
-
-    .producto-detalle-nombre {
-        flex: 1;
-        color: #333;
-        font-size: 0.95rem;
-    }
-
-    .producto-detalle-precio {
-        color: #6FA8DC;
-        font-weight: 600;
-        font-size: 0.9rem;
-        min-width: 80px;
-        text-align: right;
-    }
-
-    .cantidad-controls {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: #f0f0f0;
-        border-radius: 20px;
-        padding: 0.2rem 0.5rem;
-    }
-
-    .btn-cantidad {
-        background: #7CB9E8;
-        color: white;
-        border: none;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-
-    .btn-cantidad:hover:not(:disabled) {
-        background: #6FA8DC;
-        transform: scale(1.1);
-    }
-
-    .btn-cantidad:disabled {
-        background: #ddd;
-        color: #999;
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-
-    .cantidad-numero {
-        font-weight: bold;
-        color: #333;
-        min-width: 25px;
-        text-align: center;
-        font-size: 1rem;
-    }
-
-    .btn-eliminar-producto {
-        background: #e74c3c;
-        color: white;
-        border: none;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 0.8rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-
-    .btn-eliminar-producto:hover {
-        background: #c0392b;
-        transform: scale(1.1);
-    }
-
-    .item-tipo {
-        display: inline-block;
-        background: #6FA8DC;
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 15px;
-        font-size: 0.75rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    .item-nombre {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 0.5rem;
-    }
-
-    .item-detalles {
-        color: #666;
-        font-size: 0.9rem;
-    }
-
-    .item-precio {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #6FA8DC;
-        margin: 0 2rem;
-    }
-
-    .btn-eliminar {
-        background: #e74c3c;
-        color: white;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .btn-eliminar:hover {
-        background: #c0392b;
-        transform: scale(1.05);
-    }
-
-    .carrito-resumen {
-        background: #E8F4F8;
-        border: 2px solid #A8D8EA;
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .resumen-linea {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-        color: #555;
-    }
-
-    .resumen-total {
-        display: flex;
-        justify-content: space-between;
-        padding-top: 1rem;
-        border-top: 2px solid #A8D8EA;
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #6FA8DC;
-    }
-
-    .carrito-acciones {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-accion {
-        flex: 1;
-        padding: 1rem 2rem;
-        border: none;
-        border-radius: 25px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        min-width: 200px;
-    }
-
-    .btn-vaciar {
-        background: white;
-        color: #e74c3c;
-        border: 2px solid #e74c3c;
-    }
-
-    .btn-vaciar:hover {
-        background: #e74c3c;
-        color: white;
-    }
-
-    .btn-comprar {
-        background: #27ae60;
-        color: white;
-    }
-
-    .btn-comprar:hover {
-        background: #229954;
-        transform: scale(1.05);
-    }
-
-    .success-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background: white;
-        padding: 3rem;
-        border-radius: 20px;
-        text-align: center;
-        max-width: 500px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    }
-
-    .modal-content h3 {
-        color: #27ae60;
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .modal-content p {
-        color: #666;
-        margin-bottom: 2rem;
-        font-size: 1.1rem;
-    }
-
-    .modal-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="carrito-container">
-    <div class="carrito-header">
-        <h2>🛒 Mi Carrito</h2>
-        <a href="/" class="btn-volver">← Seguir Comprando</a>
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark flex items-center">
+            <span class="material-symbols-outlined text-primary mr-3 text-4xl">shopping_cart</span>
+            Mi Carrito
+        </h2>
+        <a href="/" class="text-primary hover:text-blue-600 dark:hover:text-blue-400 font-semibold flex items-center">
+            <span class="material-symbols-outlined mr-1">arrow_back</span>
+            Seguir Comprando
+        </a>
     </div>
 
     {% if carrito|length == 0 %}
-    <div class="carrito-vacio">
-        <div style="font-size: 5rem; margin-bottom: 1rem;">🛒</div>
-        <h3>Tu carrito está vacío</h3>
-        <p>¡Agrega algunos kits increíbles para comenzar!</p>
-        <a href="/" class="btn-seguir-comprando">Explorar Kits</a>
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg p-12 text-center">
+        <div class="text-6xl mb-4">🛒</div>
+        <h3 class="text-2xl font-semibold text-text-light dark:text-text-dark mb-2">Tu carrito está vacío</h3>
+        <p class="text-text-muted-light dark:text-text-muted-dark mb-6">¡Agrega algunos kits increíbles para comenzar!</p>
+        <a href="/" class="inline-block bg-primary text-white px-8 py-3 rounded-lg shadow-md hover:bg-blue-600 transition-colors">
+            Explorar Kits
+        </a>
     </div>
     {% else %}
-    <div class="carrito-items">
+    <div class="space-y-4 mb-6">
         {% for item in carrito %}
         {% set kit_index = loop.index0 %}
-        <div class="carrito-item">
-            <div class="item-info">
-                <span class="item-tipo">
-                    {% if item.tipo == 'kit_predefinido' %}
-                        📦 Kit Predefinido
-                    {% else %}
-                        ✨ Kit Personalizado
-                    {% endif %}
-                </span>
-                <div class="item-nombre">{{ item.nombre }}</div>
-                
-                {% if item.productos %}
-                <div class="productos-incluidos">
-                    <strong>Productos incluidos:</strong>
-                    <div class="productos-lista-detalle">
-                        {% for producto in item.productos %}
-                        <div class="producto-detalle-item">
-                            <span class="producto-detalle-nombre">
-                                • {{ producto.nombre.replace(' pack x' + producto.cantidad|string, ' pack') if 'pack x' in producto.nombre else producto.nombre }}
-                            </span>
-                            <span class="producto-detalle-precio">
-                                ${{ '{:,}'.format(producto.precio) }}
-                            </span>
-                            <div class="cantidad-controls">
-                                <button 
-                                    class="btn-cantidad" 
-                                    onclick="cambiarCantidadProducto({{ kit_index }}, {{ loop.index0 }}, -1)"
-                                    disabled
-                                >
-                                    −
-                                </button>
-                                <span class="cantidad-numero">{{ producto.cantidad if producto.cantidad else 1 }}</span>
-                                <button 
-                                    class="btn-cantidad" 
-                                    onclick="cambiarCantidadProducto({{ kit_index }}, {{ loop.index0 }}, 1)"
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                    <span class="inline-block bg-primary text-white text-sm px-3 py-1 rounded-full font-semibold mb-2">
+                        {% if item.tipo == 'kit_predefinido' %}
+                            📦 Kit Predefinido
+                        {% else %}
+                            ✨ Kit Personalizado
+                        {% endif %}
+                    </span>
+                    <h3 class="text-2xl font-bold text-text-light dark:text-text-dark">{{ item.nombre }}</h3>
                 </div>
-                {% endif %}
+                <div class="text-right">
+                    <p class="text-3xl font-bold text-primary mb-2">${{ '{:,}'.format(item.precio) }}</p>
+                    <button onclick="eliminarItem({{ kit_index }})" class="text-red-500 hover:text-red-600 dark:hover:text-red-400 font-semibold flex items-center ml-auto">
+                        <span class="material-symbols-outlined mr-1">delete</span>
+                        Eliminar Kit
+                    </button>
+                </div>
             </div>
-            <div class="item-actions">
-                <div class="item-precio">${{ '{:,}'.format(item.precio) }}</div>
-                <button class="btn-eliminar" onclick="eliminarItem({{ kit_index }})">
-                    🗑️ Eliminar Kit Completo
-                </button>
+            
+            {% if item.productos %}
+            <div class="mt-4 bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                <h4 class="font-semibold text-text-light dark:text-text-dark mb-3">Productos incluidos:</h4>
+                <div class="space-y-2">
+                    {% for producto in item.productos %}
+                    <div class="flex justify-between items-center bg-white dark:bg-gray-700 rounded-lg p-3">
+                        <span class="text-text-light dark:text-text-dark flex-1">• {{ producto.nombre }}</span>
+                        <span class="text-primary font-semibold mx-4">${{ '{:,}'.format(producto.precio) }}</span>
+                        <div class="flex items-center space-x-2 bg-gray-100 dark:bg-gray-600 rounded-full px-3 py-1">
+                            <button onclick="cambiarCantidadProducto({{ kit_index }}, {{ loop.index0 }}, -1)" disabled class="text-gray-400 dark:text-gray-500 cursor-not-allowed">
+                                <span class="material-symbols-outlined text-sm">remove</span>
+                            </button>
+                            <span class="font-bold text-text-light dark:text-text-dark min-w-[24px] text-center">{{ producto.cantidad if producto.cantidad else 1 }}</span>
+                            <button onclick="cambiarCantidadProducto({{ kit_index }}, {{ loop.index0 }}, 1)" class="text-primary hover:text-blue-600">
+                                <span class="material-symbols-outlined text-sm">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
 
-    <div class="carrito-resumen">
-        <div class="resumen-linea">
-            <span>Subtotal ({{ carrito|length }} items):</span>
-            <span>${{ '{:,}'.format(total) }}</span>
-        </div>
-        <div class="resumen-linea">
-            <span>Envío:</span>
-            <span style="color: #27ae60; font-weight: bold;">GRATIS 🎉</span>
-        </div>
-        <div class="resumen-total">
-            <span>Total:</span>
-            <span>${{ '{:,}'.format(total) }}</span>
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg p-6 mb-6">
+        <div class="space-y-3">
+            <div class="flex justify-between text-lg text-text-muted-light dark:text-text-muted-dark">
+                <span>Subtotal ({{ carrito|length }} items):</span>
+                <span>${{ '{:,}'.format(total) }}</span>
+            </div>
+            <div class="flex justify-between text-lg text-text-muted-light dark:text-text-muted-dark">
+                <span>Envío:</span>
+                <span class="text-green-600 dark:text-green-400 font-bold">GRATIS 🎉</span>
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between text-2xl font-bold text-primary">
+                <span>Total:</span>
+                <span>${{ '{:,}'.format(total) }}</span>
+            </div>
         </div>
     </div>
 
-    <div class="carrito-acciones">
-        <button class="btn-accion btn-vaciar" onclick="vaciarCarrito()">
-            🗑️ Vaciar Carrito
+    <div class="flex flex-col sm:flex-row gap-4">
+        <button onclick="vaciarCarrito()" class="flex-1 bg-white dark:bg-gray-700 text-red-500 dark:text-red-400 border-2 border-red-500 dark:border-red-400 px-6 py-3 rounded-lg font-bold hover:bg-red-50 dark:hover:bg-red-900 transition-colors flex items-center justify-center">
+            <span class="material-symbols-outlined mr-2">delete_sweep</span>
+            Vaciar Carrito
         </button>
-        <button class="btn-accion btn-comprar" onclick="realizarCompra()">
-            💳 Realizar Compra
+        <button onclick="realizarCompra()" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold shadow-lg transition-colors flex items-center justify-center">
+            <span class="material-symbols-outlined mr-2">shopping_bag</span>
+            Realizar Compra
         </button>
     </div>
     {% endif %}
 </div>
 
-<div class="success-modal" id="success-modal">
-    <div class="modal-content">
-        <div class="modal-icon">✅</div>
-        <h3>¡Compra Exitosa!</h3>
-        <p>Tu pedido ha sido procesado correctamente. Recibirás un email de confirmación pronto.</p>
-        <button class="btn-seguir-comprando" onclick="cerrarModalYVolver()">
+<!-- Modal de éxito -->
+<div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-2xl p-8 max-w-md mx-4 text-center">
+        <div class="text-6xl mb-4">✅</div>
+        <h3 class="text-3xl font-bold text-green-600 dark:text-green-400 mb-3">¡Compra Exitosa!</h3>
+        <p class="text-text-muted-light dark:text-text-muted-dark mb-6">Tu pedido ha sido procesado correctamente. Recibirás un email de confirmación pronto.</p>
+        <button onclick="cerrarModalYVolver()" class="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-600 transition-colors">
             Volver al Inicio
         </button>
     </div>
@@ -559,7 +191,7 @@
 
     async function realizarCompra() {
         const modal = document.getElementById('success-modal');
-        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
 
         await fetch('/api/carrito/limpiar', {
             method: 'POST'

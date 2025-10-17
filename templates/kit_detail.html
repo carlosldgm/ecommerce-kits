@@ -1,175 +1,54 @@
 {% extends "base.html" %}
 
-{% block extra_styles %}
-<style>
-    .kit-detail {
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-
-    .kit-header {
-        display: flex;
-        gap: 2rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-    }
-
-    .kit-image-large {
-        width: 300px;
-        height: 300px;
-        object-fit: cover;
-        border-radius: 10px;
-    }
-
-    .kit-info {
-        flex: 1;
-    }
-
-    .kit-info h2 {
-        color: #6FA8DC;
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .kit-info p {
-        color: #666;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-    }
-
-    .precio-grande {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #333;
-        margin: 1rem 0;
-    }
-
-    .productos-lista {
-        margin-top: 2rem;
-    }
-
-    .productos-lista h3 {
-        color: #333;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #A8D8EA;
-        padding-bottom: 0.5rem;
-    }
-
-    .producto-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem;
-        border-bottom: 1px solid #eee;
-        align-items: center;
-    }
-
-    .producto-item:last-child {
-        border-bottom: none;
-    }
-
-    .producto-nombre {
-        font-weight: 500;
-        color: #333;
-    }
-
-    .producto-cantidad {
-        background: #6FA8DC;
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 15px;
-        font-size: 0.9rem;
-        margin-left: 1rem;
-    }
-
-    .producto-precio {
-        color: #666;
-        font-weight: bold;
-    }
-
-    .btn-agregar {
-        background: #7CB9E8;
-        color: white;
-        border: none;
-        padding: 1rem 3rem;
-        border-radius: 25px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s, transform 0.2s;
-        margin-top: 2rem;
-        box-shadow: 0 4px 10px rgba(124, 185, 232, 0.3);
-    }
-
-    .btn-agregar:hover {
-        background: #6FA8DC;
-        transform: scale(1.05);
-    }
-
-    .btn-volver {
-        display: inline-block;
-        color: #6FA8DC;
-        text-decoration: none;
-        margin-bottom: 1rem;
-        font-weight: bold;
-        background: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border: 2px solid #6FA8DC;
-    }
-
-    .btn-volver:hover {
-        background: #E8F4F8;
-    }
-
-    .success-message {
-        background: #4caf50;
-        color: white;
-        padding: 1rem;
-        border-radius: 10px;
-        margin-top: 1rem;
-        display: none;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<a href="/" class="btn-volver">← Volver al inicio</a>
+<a href="/" class="inline-flex items-center text-primary hover:text-blue-600 dark:hover:text-blue-400 font-semibold mb-6">
+    <span class="material-symbols-outlined mr-1">arrow_back</span>
+    Volver al inicio
+</a>
 
-<div class="kit-detail">
-    <div class="kit-header">
-        {% if kit.imagen.startswith('imgs/') or kit.imagen.startswith('static/') %}
-        <img src="{{ url_for('static', filename=kit.imagen) }}" alt="{{ kit.nombre }}" class="kit-image-large">
-        {% else %}
-        <img src="{{ kit.imagen }}" alt="{{ kit.nombre }}" class="kit-image-large">
-        {% endif %}
-        <div class="kit-info">
-            <h2>{{ kit.nombre }}</h2>
-            <p>{{ kit.descripcion }}</p>
-            <div class="precio-grande">${{ '{:,}'.format(kit.precio) }}</div>
-            <button class="btn-agregar" onclick="agregarKitCarrito()">
-                🛒 Agregar al Carrito
+<div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+        <div>
+            {% if kit.imagen.startswith('imgs/') or kit.imagen.startswith('static/') %}
+            <img src="{{ url_for('static', filename=kit.imagen) }}" alt="{{ kit.nombre }}" class="w-full h-96 object-cover rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=600&fit=crop'">
+            {% else %}
+            <img src="{{ kit.imagen }}" alt="{{ kit.nombre }}" class="w-full h-96 object-cover rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=600&fit=crop'">
+            {% endif %}
+        </div>
+        
+        <div class="flex flex-col">
+            <h2 class="text-4xl font-bold text-text-light dark:text-text-dark mb-3">{{ kit.nombre }}</h2>
+            <p class="text-xl text-text-muted-light dark:text-text-muted-dark mb-6">{{ kit.descripcion }}</p>
+            <div class="text-5xl font-bold text-primary mb-8">${{ '{:,}'.format(kit.precio) }}</div>
+            
+            <button onclick="agregarKitCarrito()" class="bg-primary text-white px-8 py-4 rounded-lg text-xl font-bold shadow-lg hover:bg-blue-600 transition-all flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined mr-2">shopping_cart</span>
+                Agregar al Carrito
             </button>
-            <div class="success-message" id="success-msg">
-                ✅ Kit agregado al carrito exitosamente
+            
+            <div id="success-msg" class="hidden bg-green-600 text-white px-4 py-3 rounded-lg flex items-center">
+                <span class="material-symbols-outlined mr-2">check_circle</span>
+                Kit agregado al carrito exitosamente
             </div>
         </div>
     </div>
 
-    <div class="productos-lista">
-        <h3>📦 Contenido del Kit</h3>
-        {% for producto in productos %}
-        <div class="producto-item">
-            <div>
-                <span class="producto-nombre">{{ producto.nombre }}</span>
-                <span class="producto-cantidad">x{{ producto.cantidad }}</span>
+    <div class="border-t border-gray-200 dark:border-gray-700 p-8">
+        <h3 class="text-2xl font-bold text-text-light dark:text-text-dark mb-6 flex items-center">
+            <span class="material-symbols-outlined text-primary mr-2">inventory_2</span>
+            Contenido del Kit
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for producto in productos %}
+            <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                <div class="flex-1">
+                    <span class="text-text-light dark:text-text-dark font-medium">{{ producto.nombre }}</span>
+                    <span class="inline-block ml-3 bg-primary text-white text-sm px-2 py-1 rounded-full">x{{ producto.cantidad }}</span>
+                </div>
+                <span class="text-primary font-bold">${{ '{:,}'.format(producto.precio) }}</span>
             </div>
-            <span class="producto-precio">${{ '{:,}'.format(producto.precio) }}</span>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
@@ -178,7 +57,6 @@
 <script>
     async function agregarKitCarrito() {
         try {
-            // Preparar datos del kit con productos
             const kitData = {
                 tipo: 'kit_predefinido',
                 id: '{{ kit.id }}',
@@ -209,12 +87,12 @@
             
             if (data.success) {
                 const msg = document.getElementById('success-msg');
-                msg.style.display = 'block';
+                msg.classList.remove('hidden');
                 
                 actualizarCarrito();
                 
                 setTimeout(() => {
-                    msg.style.display = 'none';
+                    msg.classList.add('hidden');
                 }, 3000);
             }
         } catch (error) {

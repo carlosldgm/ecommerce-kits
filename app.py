@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, jsonify, session
 from data import PRODUCTOS, KITS_PREDEFINIDOS, get_producto_by_id, get_all_productos, calcular_precio_kit, get_kit_con_precio
 import os
@@ -93,7 +94,10 @@ def kit_detail(kit_id):
         producto = get_producto_by_id(item['id'])
         if producto:
             productos_detalle.append({
-                **producto,
+                'id': producto['id'],
+                'nombre': producto['nombre'],
+                'precio': producto['precio'],
+                'categoria': producto.get('categoria', ''),
                 'cantidad': item['cantidad']
             })
     
@@ -275,9 +279,9 @@ def chat():
         
         productos_json = json.dumps(productos_info, ensure_ascii=False, indent=2)
         
-        print(f"[CHAT] Usuario preguntó: {mensaje_usuario}")
-        print(f"[CHAT] Historial: {len(historial)} mensajes previos")
-        print(f"[CHAT] Llamando a OpenAI...")
+        print("[CHAT] Usuario preguntó: " + str(mensaje_usuario))
+        print("[CHAT] Historial: {} mensajes previos".format(len(historial)))
+        print("[CHAT] Llamando a OpenAI...")
         
         # Construir mensajes con historial
         messages = [
@@ -327,7 +331,10 @@ def chat():
                         precio_calculado += precio_producto
                         
                         productos_completos.append({
-                            **producto,
+                            'id': producto['id'],
+                            'nombre': producto['nombre'],
+                            'precio': producto['precio'],
+                            'categoria': producto.get('categoria', ''),
                             'cantidad': cantidad
                         })
                 

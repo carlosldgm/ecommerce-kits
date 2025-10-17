@@ -1,164 +1,80 @@
 {% extends "base.html" %}
 
-{% block extra_styles %}
-<style>
-    .hero {
-        text-align: center;
-        color: #6FA8DC;
-        margin-bottom: 3rem;
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .hero h2 {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        color: #6FA8DC;
-    }
-
-    .hero p {
-        font-size: 1.2rem;
-        color: #666;
-    }
-
-    .kits-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-    }
-
-    .kit-card {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-        cursor: pointer;
-        border: 2px solid transparent;
-    }
-
-    .kit-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        border-color: #7CB9E8;
-    }
-
-    .kit-image {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-
-    .kit-content {
-        padding: 1.5rem;
-    }
-
-    .kit-content h3 {
-        color: #6FA8DC;
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .kit-content p {
-        color: #666;
-        margin-bottom: 1rem;
-    }
-
-    .kit-price {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #6FA8DC;
-        margin-bottom: 1rem;
-    }
-
-    .btn {
-        display: inline-block;
-        background: #7CB9E8;
-        color: white;
-        padding: 0.8rem 2rem;
-        border-radius: 25px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background 0.3s;
-        box-shadow: 0 2px 5px rgba(124, 185, 232, 0.3);
-    }
-
-    .btn:hover {
-        background: #6FA8DC;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(124, 185, 232, 0.4);
-    }
-
-    .custom-kit-card {
-        background: linear-gradient(135deg, #7CB9E8 0%, #6FA8DC 100%);
-        color: white;
-    }
-
-    .custom-kit-card h3,
-    .custom-kit-card p {
-        color: white;
-    }
-
-    .custom-kit-card .btn {
-        background: white;
-        color: #6FA8DC;
-    }
-
-    .custom-kit-card .btn:hover {
-        background: #E8F4F8;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="hero">
-    <h2>🎁 Bienvenido a KitBox</h2>
-    <p>Encuentra el kit perfecto o créalo a tu medida</p>
-</div>
-
-<div class="kits-grid">
-    <!-- Kit Semanal -->
-    <div class="kit-card" onclick="location.href='/kit/semanal'">
-        {% if kits.semanal.imagen.startswith('imgs/') or kits.semanal.imagen.startswith('static/') %}
-        <img src="{{ url_for('static', filename=kits.semanal.imagen) }}" alt="Kit Semanal" class="kit-image">
-        {% else %}
-        <img src="{{ kits.semanal.imagen }}" alt="Kit Semanal" class="kit-image">
-        {% endif %}
-        <div class="kit-content">
-            <h3>📅 {{ kits.semanal.nombre }}</h3>
-            <p>{{ kits.semanal.descripcion }}</p>
-            <div class="kit-price">${{ '{:,}'.format(kits.semanal.precio) }}</div>
-            <a href="/kit/semanal" class="btn">Ver Detalles</a>
-        </div>
-    </div>
-
-    <!-- Kit Mensual -->
-    <div class="kit-card" onclick="location.href='/kit/mensual'">
-        {% if kits.mensual.imagen.startswith('imgs/') or kits.mensual.imagen.startswith('static/') %}
-        <img src="{{ url_for('static', filename=kits.mensual.imagen) }}" alt="Kit Mensual" class="kit-image">
-        {% else %}
-        <img src="{{ kits.mensual.imagen }}" alt="Kit Mensual" class="kit-image">
-        {% endif %}
-        <div class="kit-content">
-            <h3>📆 {{ kits.mensual.nombre }}</h3>
-            <p>{{ kits.mensual.descripcion }}</p>
-            <div class="kit-price">${{ '{:,}'.format(kits.mensual.precio) }}</div>
-            <a href="/kit/mensual" class="btn">Ver Detalles</a>
-        </div>
-    </div>
-
-    <!-- Kit Customizado -->
-    <div class="kit-card custom-kit-card" onclick="location.href='/kit/custom'">
-        <img src="{{ url_for('static', filename='imgs/kit_custom.png') }}" alt="Kit Customizado" class="kit-image" onerror="this.src='https://images.unsplash.com/photo-1557821552-17105176677c?w=400'">
-        <div class="kit-content">
-            <h3>✨ Kit Customizado</h3>
-            <p>Crea tu kit personalizado con ayuda de nuestra IA</p>
-            <div class="kit-price">A tu medida</div>
-            <a href="/kit/custom" class="btn">Crear Mi Kit</a>
-        </div>
+<div class="text-center py-12 md:py-16">
+    <h1 class="text-4xl md:text-6xl font-bold text-text-light dark:text-text-dark mb-4">
+        Tu caja de sorpresas, <span class="text-primary">a tu medida.</span>
+    </h1>
+    <p class="text-lg md:text-xl text-text-muted-light dark:text-text-muted-dark max-w-3xl mx-auto mb-8">
+        Encuentra el kit perfecto para ti, desde snacks hasta productos de limpieza. Descubre kits prediseñados o crea el tuyo con nuestra IA.
+    </p>
+    <div class="flex justify-center space-x-4">
+        <a class="bg-primary text-white px-8 py-3 rounded-lg shadow-lg hover:bg-blue-600 transition-transform transform hover:scale-105" href="#kits">
+            Explorar Kits
+        </a>
+        <a class="bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all border border-gray-200 dark:border-gray-600" href="/kit/custom">
+            Crear Mi Kit
+        </a>
     </div>
 </div>
+
+<section id="kits" class="py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Kit Semanal -->
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2 flex flex-col cursor-pointer" onclick="location.href='/kit/semanal'">
+            {% if kits.semanal.imagen.startswith('imgs/') or kits.semanal.imagen.startswith('static/') %}
+            <img src="{{ url_for('static', filename=kits.semanal.imagen) }}" alt="Kit Semanal" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=300&fit=crop'">
+            {% else %}
+            <img src="{{ kits.semanal.imagen }}" alt="Kit Semanal" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=300&fit=crop'">
+            {% endif %}
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-2xl font-bold mb-2 text-text-light dark:text-text-dark flex items-center">
+                    <span class="material-symbols-outlined text-primary mr-2">calendar_view_week</span>
+                    {{ kits.semanal.nombre }}
+                </h3>
+                <p class="text-text-muted-light dark:text-text-muted-dark mb-4 flex-grow">{{ kits.semanal.descripcion }}</p>
+                <p class="text-3xl font-bold text-primary mb-6">${{ '{:,}'.format(kits.semanal.precio) }}</p>
+                <a class="mt-auto w-full text-center bg-gray-200 dark:bg-gray-600 text-text-light dark:text-text-dark font-semibold py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" href="/kit/semanal" onclick="event.stopPropagation()">
+                    Ver Detalles
+                </a>
+            </div>
+        </div>
+
+        <!-- Kit Mensual -->
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2 flex flex-col cursor-pointer" onclick="location.href='/kit/mensual'">
+            {% if kits.mensual.imagen.startswith('imgs/') or kits.mensual.imagen.startswith('static/') %}
+            <img src="{{ url_for('static', filename=kits.mensual.imagen) }}" alt="Kit Mensual" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&h=300&fit=crop'">
+            {% else %}
+            <img src="{{ kits.mensual.imagen }}" alt="Kit Mensual" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&h=300&fit=crop'">
+            {% endif %}
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-2xl font-bold mb-2 text-text-light dark:text-text-dark flex items-center">
+                    <span class="material-symbols-outlined text-primary mr-2">calendar_month</span>
+                    {{ kits.mensual.nombre }}
+                </h3>
+                <p class="text-text-muted-light dark:text-text-muted-dark mb-4 flex-grow">{{ kits.mensual.descripcion }}</p>
+                <p class="text-3xl font-bold text-primary mb-6">${{ '{:,}'.format(kits.mensual.precio) }}</p>
+                <a class="mt-auto w-full text-center bg-gray-200 dark:bg-gray-600 text-text-light dark:text-text-dark font-semibold py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" href="/kit/mensual" onclick="event.stopPropagation()">
+                    Ver Detalles
+                </a>
+            </div>
+        </div>
+
+        <!-- Kit Customizado -->
+        <div class="bg-primary text-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2 flex flex-col cursor-pointer" onclick="location.href='/kit/custom'">
+            <img src="{{ url_for('static', filename='imgs/kit_custom.png') }}" alt="Kit Customizado" class="w-full h-56 object-cover" onerror="this.src='https://images.unsplash.com/photo-1557821552-17105176677c?w=400&h=300&fit=crop'">
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-2xl font-bold mb-2 flex items-center">
+                    <span class="material-symbols-outlined mr-2">auto_awesome</span>
+                    Kit Personalizado
+                </h3>
+                <p class="text-blue-100 mb-4 flex-grow">Crea tu kit perfecto con ayuda de nuestra IA. Elige tus preferencias y te sorprenderemos.</p>
+                <p class="text-3xl font-bold text-white mb-6">A tu medida</p>
+                <a class="mt-auto w-full text-center bg-white text-primary font-semibold py-3 rounded-lg hover:bg-blue-100 transition-colors" href="/kit/custom" onclick="event.stopPropagation()">
+                    Crear Mi Kit
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
