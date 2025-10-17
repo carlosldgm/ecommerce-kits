@@ -161,7 +161,7 @@
             
             <div class="border-t border-border-light dark:border-border-dark my-6"></div>
             
-            <div id="kit-items" class="space-y-4 max-h-60 overflow-y-auto pr-2 mb-4">
+            <div id="kit-items" class="space-y-3 max-h-80 overflow-y-auto pr-2 mb-4">
                 <div class="text-center text-text-muted-light dark:text-text-muted-dark py-8 text-sm">
                     Aún no has agregado productos.
                 </div>
@@ -322,7 +322,7 @@
                 total += producto.precio * (producto.cantidad || 1);
                 
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between mb-4';
+                item.className = 'flex items-center justify-between mb-3 pb-3 border-b border-gray-100 dark:border-gray-700 last:border-0 last:pb-0';
                 item.innerHTML = `
                     <div class="flex-1 min-w-0 pr-4">
                         <p class="font-medium text-text-light dark:text-text-dark text-sm">${producto.nombre}</p>

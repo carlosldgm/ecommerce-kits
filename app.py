@@ -5,7 +5,7 @@ import os
 from openai import OpenAI
 
 app = Flask(__name__)
-app.secret_key = 'tu-clave-secreta-super-segura-12345'
+app.secret_key = 'mi-clave-secreta-super-segura-12345'
 
 # Configurar OpenAI
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
