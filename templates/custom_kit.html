@@ -2,7 +2,6 @@
 
 {% block extra_styles %}
 <style>
-    /* Ajustes específicos para esta página */
     .chat-message-user {
         background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
     }
@@ -15,72 +14,156 @@
         transform: translateY(-4px);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
+    
+    .mode-option {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .mode-option.active {
+        border-color: #0EA5E9;
+        background-color: rgb(240 249 255);
+    }
+    
+    .dark .mode-option.active {
+        background-color: rgb(12 74 110 / 0.2);
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="mb-6">
+<div class="mb-8">
     <a href="/" class="inline-flex items-center text-sm text-text-muted-light dark:text-text-muted-dark hover:text-sky-500 dark:hover:text-sky-500 transition-colors">
-        <span class="material-symbols-outlined mr-1 text-base">arrow_back</span>
+        <span class="material-symbols-outlined mr-1">arrow_back</span>
         Volver al Inicio
     </a>
+    <h1 class="text-3xl font-bold mt-2 text-text-light dark:text-text-dark">Crea tu Kit Personalizado</h1>
+    <p class="text-text-muted-light dark:text-text-muted-dark mt-1">Sigue los pasos para armar tu caja ideal.</p>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-    <!-- Columna Izquierda: Chat IA + Mi Kit -->
-    <div class="lg:col-span-1 space-y-8">
-        <!-- Panel del Chat con IA -->
+    <!-- Columna Izquierda: Pasos 1 y 2 -->
+    <div class="lg:col-span-2 space-y-8">
+        <!-- Paso 1: Elegir modo -->
         <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow p-6">
-            <div class="flex items-center mb-4">
-                <span class="material-symbols-outlined text-sky-500 mr-3 text-3xl">smart_toy</span>
-                <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Asistente IA</h2>
-            </div>
-            
-            <div class="bg-sky-50 dark:bg-sky-900/20 p-4 rounded-md text-sm text-sky-800 dark:text-sky-300 mb-4">
-                <p class="font-semibold mb-2">Puedes pedirme:</p>
-                <ul class="list-disc list-inside space-y-1 text-xs">
-                    <li>"Arma una caja con $20.000 de productos de limpieza"</li>
-                    <li>"Necesito snacks para picoteo con presupuesto de $15.000"</li>
-                    <li>"Dame opciones de productos de belleza hasta $30.000"</li>
-                    <li>"Quiero artículos para bebé, tengo $25.000"</li>
-                </ul>
-            </div>
-
-            <div id="chat-messages" class="space-y-4 mb-4 max-h-64 overflow-y-auto">
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm flex-shrink-0">
-                        <span class="material-symbols-outlined text-base">spark</span>
-                    </div>
-                    <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex-1">
-                        <p class="text-sm text-text-light dark:text-text-dark">¡Hola! 👋 Soy tu asistente para armar kits personalizados. Cuéntame qué tipo de productos necesitas y cuál es tu presupuesto, y te daré 3 opciones perfectas para ti.</p>
-                    </div>
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-10 h-10 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold text-lg">1</div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Elige cómo armar tu kit</h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark mt-1">Puedes usar nuestro asistente inteligente o seleccionar los productos tú mismo.</p>
                 </div>
             </div>
-
-            <div class="flex items-center">
-                <input 
-                    id="chat-input"
-                    class="w-full bg-gray-100 dark:bg-gray-700 border-transparent focus:border-sky-500 focus:ring-sky-500 rounded-l-md text-sm px-4 py-2.5" 
-                    placeholder="Escribe tu mensaje aquí..." 
-                    type="text"
-                    onkeypress="if(event.key === 'Enter') enviarMensaje()"
-                />
-                <button onclick="enviarMensaje()" class="bg-sky-500 text-white p-2.5 rounded-r-md hover:bg-sky-600 transition-colors">
-                    <span class="material-symbols-outlined">send</span>
-                </button>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div id="mode-ai" class="mode-option active border-2 rounded-lg p-4 flex flex-col items-center text-center" onclick="cambiarModo('ai')">
+                    <span class="material-symbols-outlined text-sky-500 text-4xl mb-3">smart_toy</span>
+                    <h3 class="font-semibold text-text-light dark:text-text-dark">Usar Asistente IA</h3>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark mt-1">Déjanos ayudarte a encontrar la combinación perfecta.</p>
+                </div>
+                
+                <div id="mode-manual" class="mode-option border border-border-light dark:border-border-dark rounded-lg p-4 flex flex-col items-center text-center" onclick="cambiarModo('manual')">
+                    <span class="material-symbols-outlined text-text-muted-light dark:text-text-muted-dark text-4xl mb-3">edit_square</span>
+                    <h3 class="font-semibold text-text-light dark:text-text-dark">Armado Manual</h3>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark mt-1">Explora el catálogo y elige cada producto.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Panel Mi Kit Personalizado -->
+        <!-- Paso 2: Construir Kit -->
         <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow p-6">
-            <div class="flex items-center mb-4">
-                <span class="material-symbols-outlined text-sky-500 mr-3 text-3xl">inventory_2</span>
-                <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Mi Kit Personalizado</h2>
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-10 h-10 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold text-lg">2</div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Construye tu Kit</h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark mt-1" id="step2-description">Describe lo que necesitas y te ayudaremos a crear el kit perfecto.</p>
+                </div>
+            </div>
+
+            <!-- Sección Asistente IA -->
+            <div id="section-ai" class="mt-6">
+                <div class="bg-sky-50 dark:bg-sky-900/20 p-4 rounded-md text-sm text-sky-800 dark:text-sky-300 mb-4">
+                    <p class="font-semibold mb-2">Ejemplos de prompts para el asistente:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>"Arma una caja con $20.000 de productos de limpieza"</li>
+                        <li>"Necesito snacks para picoteo con presupuesto de $15.000"</li>
+                        <li>"Dame opciones de productos de belleza hasta $30.000"</li>
+                    </ul>
+                </div>
+
+                <div id="chat-messages" class="space-y-4 mb-4 max-h-96 overflow-y-auto">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm flex-shrink-0">
+                            <span class="material-symbols-outlined text-base">auto_awesome</span>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex-1">
+                            <p class="text-sm text-text-light dark:text-text-dark">¡Hola! 👋 Soy tu asistente. Dime qué buscas y tu presupuesto, y te crearé 3 opciones de kits.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <input 
+                        id="chat-input"
+                        class="w-full bg-gray-100 dark:bg-gray-700 border-transparent focus:border-sky-500 focus:ring-sky-500 rounded-md text-sm pl-4 pr-12 py-3" 
+                        placeholder="Ej: Productos de belleza hasta $30.000..." 
+                        type="text"
+                        onkeypress="if(event.key === 'Enter') enviarMensaje()"
+                    />
+                    <button onclick="enviarMensaje()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-sky-500 text-white p-2 rounded-md hover:bg-sky-600 transition-colors">
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sección Armado Manual (Catálogo) -->
+            <div id="section-manual" class="mt-6 hidden">
+                <div class="flex items-center mb-6">
+                    <span class="material-symbols-outlined text-sky-500 mr-3 text-3xl">storefront</span>
+                    <h3 class="text-lg font-semibold text-text-light dark:text-text-dark">Catálogo de Productos</h3>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="cambiarCategoria('limpieza')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-full transition-colors">
+                        <span class="material-symbols-outlined text-base">cleaning_services</span>
+                        Limpieza
+                    </button>
+                    <button onclick="cambiarCategoria('snacks')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                        <span class="material-symbols-outlined text-base">fastfood</span>
+                        Snacks
+                    </button>
+                    <button onclick="cambiarCategoria('belleza')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                        <span class="material-symbols-outlined text-base">face</span>
+                        Belleza
+                    </button>
+                    <button onclick="cambiarCategoria('bebe')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                        <span class="material-symbols-outlined text-base">child_care</span>
+                        Bebé
+                    </button>
+                </div>
+                
+                <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <!-- Los productos se cargarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Paso 3 - Revisar Kit (Sticky) -->
+    <div class="lg:col-span-1 lg:sticky lg:top-8">
+        <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow p-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-10 h-10 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold text-lg">3</div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Revisa tu Kit</h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark mt-1">Confirma los productos y agrégalo al carrito.</p>
+                </div>
             </div>
             
-            <div id="kit-items" class="space-y-4 mb-4 max-h-64 overflow-y-auto">
+            <div class="border-t border-border-light dark:border-border-dark my-6"></div>
+            
+            <div id="kit-items" class="space-y-4 max-h-60 overflow-y-auto pr-2 mb-4">
                 <div class="text-center text-text-muted-light dark:text-text-muted-dark py-8 text-sm">
-                    Aún no has agregado productos. Selecciona del catálogo o pide ayuda al asistente IA.
+                    Aún no has agregado productos.
                 </div>
             </div>
             
@@ -94,41 +177,10 @@
             <button 
                 id="btn-finalizar"
                 onclick="finalizarKit()"
-                class="w-full bg-green-500 text-white font-bold py-3 rounded-md flex items-center justify-center space-x-2 hover:bg-green-600 transition-colors hidden">
+                class="w-full bg-green-500 text-white font-bold py-3 rounded-md flex items-center justify-center space-x-2 hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed hidden">
                 <span class="material-symbols-outlined">add_shopping_cart</span>
                 <span>Agregar Kit al Carrito</span>
             </button>
-        </div>
-    </div>
-
-    <!-- Columna Derecha: Catálogo -->
-    <div class="lg:col-span-2 bg-surface-light dark:bg-surface-dark rounded-lg shadow p-6">
-        <div class="flex items-center mb-6">
-            <span class="material-symbols-outlined text-sky-500 mr-3 text-3xl">storefront</span>
-            <h2 class="text-xl font-semibold text-text-light dark:text-text-dark">Catálogo de Productos</h2>
-        </div>
-        
-        <div class="flex flex-wrap gap-2 mb-6">
-            <button onclick="cambiarCategoria('limpieza')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-full transition-colors">
-                <span class="material-symbols-outlined text-base">cleaning_services</span>
-                Limpieza
-            </button>
-            <button onclick="cambiarCategoria('snacks')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
-                <span class="material-symbols-outlined text-base">fastfood</span>
-                Snacks
-            </button>
-            <button onclick="cambiarCategoria('belleza')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
-                <span class="material-symbols-outlined text-base">face</span>
-                Belleza
-            </button>
-            <button onclick="cambiarCategoria('bebe')" class="tab-btn flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
-                <span class="material-symbols-outlined text-base">child_care</span>
-                Bebé
-            </button>
-        </div>
-        
-        <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            <!-- Los productos se cargarán aquí dinámicamente -->
         </div>
     </div>
 </div>
@@ -140,17 +192,44 @@
     let miKit = [];
     let categoriaActual = 'limpieza';
     let historialChat = [];
-
-    const iconosCategoria = {
-        'limpieza': 'cleaning_services',
-        'snacks': 'fastfood',
-        'belleza': 'face',
-        'bebe': 'child_care'
-    };
+    let modoActual = 'ai'; // 'ai' o 'manual'
 
     document.addEventListener('DOMContentLoaded', () => {
         mostrarProductos('limpieza');
     });
+
+    // Cambiar entre modo IA y Manual
+    function cambiarModo(modo) {
+        modoActual = modo;
+        
+        const modeAi = document.getElementById('mode-ai');
+        const modeManual = document.getElementById('mode-manual');
+        const sectionAi = document.getElementById('section-ai');
+        const sectionManual = document.getElementById('section-manual');
+        const step2Description = document.getElementById('step2-description');
+        
+        if (modo === 'ai') {
+            modeAi.classList.add('active', 'border-2');
+            modeAi.classList.remove('border');
+            modeManual.classList.remove('active', 'border-2');
+            modeManual.classList.add('border');
+            
+            sectionAi.classList.remove('hidden');
+            sectionManual.classList.add('hidden');
+            
+            step2Description.textContent = 'Describe lo que necesitas y te ayudaremos a crear el kit perfecto.';
+        } else {
+            modeManual.classList.add('active', 'border-2');
+            modeManual.classList.remove('border');
+            modeAi.classList.remove('active', 'border-2');
+            modeAi.classList.add('border');
+            
+            sectionManual.classList.remove('hidden');
+            sectionAi.classList.add('hidden');
+            
+            step2Description.textContent = 'Busca productos en nuestro catálogo y agrégalos a tu kit.';
+        }
+    }
 
     function cambiarCategoria(categoria) {
         categoriaActual = categoria;
@@ -177,7 +256,7 @@
         
         productosCategoria.forEach(producto => {
             const card = document.createElement('div');
-            card.className = 'product-card border border-border-light dark:border-border-dark rounded-lg p-4 flex flex-col justify-between hover:shadow-lg';
+            card.className = 'product-card border border-border-light dark:border-border-dark rounded-lg p-4 flex flex-col justify-between hover:shadow-md transition-shadow';
             card.innerHTML = `
                 <div>
                     <p class="font-semibold text-text-light dark:text-text-dark text-sm mb-2">${producto.nombre}</p>
@@ -230,7 +309,7 @@
         if (miKit.length === 0) {
             itemsContainer.innerHTML = `
                 <div class="text-center text-text-muted-light dark:text-text-muted-dark py-8 text-sm">
-                    Aún no has agregado productos. Selecciona del catálogo o pide ayuda al asistente IA.
+                    Aún no has agregado productos.
                 </div>
             `;
             totalPrecio.textContent = '$0';
@@ -243,22 +322,22 @@
                 total += producto.precio * (producto.cantidad || 1);
                 
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between';
+                item.className = 'flex items-center justify-between mb-4';
                 item.innerHTML = `
                     <div class="flex-1 min-w-0 pr-4">
-                        <p class="font-medium text-text-light dark:text-text-dark text-sm truncate">${producto.nombre}</p>
+                        <p class="font-medium text-text-light dark:text-text-dark text-sm">${producto.nombre}</p>
                         <p class="text-xs text-text-muted-light dark:text-text-muted-dark">$${producto.precio.toLocaleString()} c/u</p>
                     </div>
                     <div class="flex items-center space-x-2 flex-shrink-0">
-                        <button onclick="cambiarCantidadEnKit(${index}, -1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-sm">
+                        <button onclick="cambiarCantidadEnKit(${index}, -1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-lg">
                             -
                         </button>
-                        <span class="font-semibold w-4 text-center text-sm">${producto.cantidad || 1}</span>
-                        <button onclick="cambiarCantidadEnKit(${index}, 1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-sm">
+                        <span class="font-semibold w-4 text-center">${producto.cantidad || 1}</span>
+                        <button onclick="cambiarCantidadEnKit(${index}, 1)" class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-600 text-text-muted-light dark:text-text-muted-dark hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-lg">
                             +
                         </button>
                         <button onclick="quitarProducto(${index})" class="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors">
-                            <span class="material-symbols-outlined text-base">delete</span>
+                            <span class="material-symbols-outlined">delete</span>
                         </button>
                     </div>
                 `;
@@ -348,7 +427,7 @@
         } else {
             mensaje.innerHTML = `
                 <div class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm flex-shrink-0">
-                    <span class="material-symbols-outlined text-base">spark</span>
+                    <span class="material-symbols-outlined text-base">auto_awesome</span>
                 </div>
                 <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg rounded-tl-none flex-1 max-w-[85%]">
                     <p class="text-sm text-text-light dark:text-text-dark">${texto}</p>
