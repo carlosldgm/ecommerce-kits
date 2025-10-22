@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, jsonify, session
 from data import PRODUCTOS, KITS_PREDEFINIDOS, get_producto_by_id, get_all_productos, calcular_precio_kit, get_kit_con_precio
 import os
 from openai import OpenAI
+from ai_assistant import procesar_mensaje_ia, generar_session_id
 
 app = Flask(__name__)
 app.secret_key = 'mi-clave-secreta-super-segura-12345'
@@ -259,14 +260,16 @@ def eliminar_item_carrito(index):
 def chat():
     data = request.json
     mensaje_usuario = data.get('mensaje', '')
-    historial = data.get('historial', [])  # Recibir historial de conversación
+    historial = data.get('historial', [])
     
     if not mensaje_usuario:
         return jsonify({'error': 'Mensaje vacío'}), 400
     
     try:
-        # Preparar información de productos para el prompt
+        # Preparar información de productos
         import json
+        from data import PRODUCTOS, get_producto_by_id
+        
         productos_info = []
         for categoria, productos in PRODUCTOS.items():
             for producto in productos:
@@ -277,47 +280,31 @@ def chat():
                     'categoria': categoria
                 })
         
-        productos_json = json.dumps(productos_info, ensure_ascii=False, indent=2)
+        # Obtener o crear session_id
+        if 'session_id' not in session:
+            session['session_id'] = generar_session_id()
         
-        print("[CHAT] Usuario preguntó: " + str(mensaje_usuario))
-        print("[CHAT] Historial: {} mensajes previos".format(len(historial)))
-        print("[CHAT] Llamando a OpenAI...")
+        session_id = session['session_id']
+        current_turn = len(historial) // 2  # Número de intercambios
         
-        # Construir mensajes con historial
-        messages = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT.format(productos_json=productos_json)
-            }
-        ]
+        print(f"[CHAT] Usuario preguntó: {mensaje_usuario}")
+        print(f"[CHAT] Session: {session_id}, Turn: {current_turn}")
         
-        # Agregar historial de conversación
-        messages.extend(historial)
-        
-        # Agregar mensaje actual del usuario
-        messages.append({
-            "role": "user",
-            "content": mensaje_usuario
-        })
-        
-        # Llamar a OpenAI
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            temperature=0.7,
-            max_tokens=1500,
-            response_format={"type": "json_object"}
+        # USAR SISTEMA MEJORADO
+        respuesta_json = procesar_mensaje_ia(
+            mensaje_usuario=mensaje_usuario,
+            historial=historial,
+            productos_info=productos_info,
+            session_id=session_id,
+            current_turn=current_turn
         )
         
-        # Obtener respuesta
-        respuesta_texto = response.choices[0].message.content
-        print(f"[CHAT] Respuesta de OpenAI: {respuesta_texto[:200]}...")
-        
-        # Parsear como JSON
-        respuesta_json = json.loads(respuesta_texto)
+        # Verificar si alcanzó límite
+        if respuesta_json.get('limite_alcanzado'):
+            return jsonify(respuesta_json)
         
         # Enriquecer las opciones con información completa de productos Y VALIDAR PRECIOS
-        if 'opciones' in respuesta_json:
+        if 'opciones' in respuesta_json and respuesta_json['opciones']:
             for opcion in respuesta_json['opciones']:
                 productos_completos = []
                 precio_calculado = 0
@@ -326,7 +313,6 @@ def chat():
                     producto = get_producto_by_id(item['id'])
                     if producto:
                         cantidad = item['cantidad']
-                        # Calcular precio correcto: precio unitario × cantidad
                         precio_producto = producto['precio'] * cantidad
                         precio_calculado += precio_producto
                         
@@ -349,14 +335,6 @@ def chat():
         
         print(f"[CHAT] Enviando {len(respuesta_json.get('opciones', []))} opciones al frontend")
         return jsonify(respuesta_json)
-    
-    except json.JSONDecodeError as e:
-        print(f"[ERROR] No se pudo parsear JSON: {str(e)}")
-        print(f"[ERROR] Respuesta recibida: {respuesta_texto}")
-        return jsonify({
-            'mensaje': 'Lo siento, hubo un error al procesar la respuesta. Por favor intenta de nuevo.',
-            'opciones': []
-        }), 500
     
     except Exception as e:
         print(f"[ERROR] Error en chat: {str(e)}")

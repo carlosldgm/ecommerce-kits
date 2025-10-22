@@ -3,7 +3,7 @@
 {% block extra_styles %}
 <style>
     .chat-message-user {
-        background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+        background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%) !important;
     }
     
     .product-card {
@@ -420,7 +420,7 @@
         
         if (tipo === 'user') {
             mensaje.innerHTML = `
-                <div class="chat-message-user p-3 rounded-lg rounded-tr-none flex-1 ml-auto max-w-[85%]">
+                <div style="background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);" class="p-3 rounded-lg rounded-tr-none flex-1 ml-auto max-w-[85%]">
                     <p class="text-sm text-white">${texto}</p>
                 </div>
             `;
