@@ -25,9 +25,10 @@ REGLAS_COMPOSICION = {
     "fiesta_infantil": {
         "min_snacks": 4,
         "max_alcohol_tipos": 0,  # SIN alcohol
-        "productos_recomendados": ["S001", "S002", "S004", "S007", "S009", "S010"],  # Incluir gomitas y bebidas sin alcohol
-        "productos_evitar": ["S011", "S012", "S013", "S014", "S015", "S016", "S017", "S018", "S019", "S020", "S021", "S022", "S023", "S024", "S025"],  # TODO el alcohol
-        "descripcion": "Fiesta INFANTIL: Solo snacks y bebidas sin alcohol"
+        "productos_recomendados": ["S001", "S002", "S004", "S007", "S009"],  # Incluir gomitas y snacks infantiles
+        "productos_evitar": ["S010",  # Bebidas energéticas
+                           "S011", "S012", "S013", "S014", "S015", "S016", "S017", "S018", "S019", "S020", "S021", "S022", "S023", "S024", "S025"],  # Todo el alcohol
+        "descripcion": "Fiesta INFANTIL: Solo snacks y bebidas sin alcohol ni energéticas"
     },
     "hogar": {
         "min_limpieza": 4,
@@ -182,14 +183,14 @@ def aplicar_reglas_composicion(productos_seleccionados, contexto, productos_db):
     
     print(f"[REGLAS] Aplicando reglas de composición para: {tipo_regla}")
     
-    # Regla 1: Eliminar alcohol en fiestas infantiles
+    # Regla 1: Eliminar alcohol y bebidas energéticas en fiestas infantiles
     if es_infantil:
         alcohol_ids = [f"S{str(i).zfill(3)}" for i in range(11, 26)]
-        productos_con_alcohol = [p for p in productos_seleccionados if p['id'] in alcohol_ids]
+        productos_prohibidos = [p for p in productos_seleccionados if p['id'] in alcohol_ids or p['id'] == 'S010']  # S010 es bebida energética
         
-        if productos_con_alcohol:
-            errores.append(f"Eliminando {len(productos_con_alcohol)} productos alcohólicos (fiesta infantil)")
-            productos_seleccionados[:] = [p for p in productos_seleccionados if p['id'] not in alcohol_ids]
+        if productos_prohibidos:
+            errores.append(f"Eliminando {len(productos_prohibidos)} productos no aptos para niños (alcohol/energéticas)")
+            productos_seleccionados[:] = [p for p in productos_seleccionados if p['id'] not in alcohol_ids and p['id'] != 'S010']
     
     # Regla 2: Balancear snacks vs alcohol (para fiestas de adultos)
     if tipo_compra == 'fiesta' and not es_infantil:
@@ -433,13 +434,15 @@ def validar_restricciones(productos, contexto, productos_db):
     """Valida y corrige restricciones básicas"""
     errores = []
     
-    # Validación de alcohol en fiesta infantil (redundante con reglas, pero por seguridad)
+    # Validación de alcohol y bebidas energéticas en fiesta infantil (redundante con reglas, pero por seguridad)
     if contexto.get('es_fiesta_infantil'):
         alcohol_ids = [f"S{str(i).zfill(3)}" for i in range(11, 26)]
         tiene_alcohol = any(p['id'] in alcohol_ids for p in productos)
-        if tiene_alcohol:
-            errores.append("Tiene alcohol en fiesta infantil (validación de seguridad)")
-            productos[:] = [p for p in productos if p['id'] not in alcohol_ids]
+        tiene_energeticas = any(p['id'] == 'S010' for p in productos)  # S010 es bebida energética
+        
+        if tiene_alcohol or tiene_energeticas:
+            errores.append("Tiene alcohol o bebidas energéticas en fiesta infantil (validación de seguridad)")
+            productos[:] = [p for p in productos if p['id'] not in alcohol_ids and p['id'] != 'S010']
     
     # Validación de límite de alcohol
     if contexto.get('limite_alcohol') is not None:
